@@ -1,7 +1,7 @@
 {
  "A": "lstm_own_mean",
  "B": "lstm_glove_mean",
- "rule": "highest classifier-val accuracy among the 10 LM feature sets; ties by val macro-F1 then table order (D22)",
+ "rule": "highest classifier-val accuracy among the 10 LM feature sets; ties keep the table order (stable sort)",
  "ranking_by_val_acc": [
   {
    "feature_set": "lstm_own_mean",

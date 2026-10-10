@@ -55,9 +55,12 @@ def main() -> None:
     table[PAD] = 0.0
 
     word_counts = counts.copy(); word_counts[:3] = 0
-    tok_total_words = int(word_counts.sum())                # LM-train word tokens (excl. specials)
+    tok_total_words = int(word_counts.sum())                # LM-train in-vocabulary word tokens (excl. specials)
     tok_covered = int(word_counts[covered].sum())
-    unk_tokens = int(counts[UNK])
+    # <unk> occurrences must be counted in the stream: vocab.json stores count 0 for <unk> (only <eos> gets its
+    # real count), so counts[UNK] would silently report zero unknown tokens.
+    train_stream = np.load(ROOT / cfg["streams_dir"] / "lm_train.npy")
+    unk_tokens = int((train_stream == UNK).sum())
     uncovered_ids = [i for i in np.argsort(-word_counts) if words[i] and not covered[i]][: cfg["n_uncovered_listed"]]
     info = {
         "source": "glove.6B.300d (Wikipedia 2014 + Gigaword 5, 6B tokens, 400k uncased vocabulary)", "zip": cfg["zip_path"],
@@ -69,6 +72,7 @@ def main() -> None:
             "pct_lm_train_word_tokens_covered": 100.0 * tok_covered / tok_total_words,
             "pct_lm_train_tokens_covered_counting_unk_as_uncovered": 100.0 * tok_covered / (tok_total_words + unk_tokens),
             "unk_tokens_in_lm_train": unk_tokens,
+            "unk_count_source": "counted in data/streams/lm_train.npy (vocab.json stores 0 for <unk>)",
         },
         "most_frequent_uncovered_words": [{"word": itos[i], "lm_train_count": int(counts[i])} for i in uncovered_ids],
         "n_missing_words_random_init": int(missing.sum() - 2), "init": {

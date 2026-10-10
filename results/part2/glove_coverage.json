@@ -2,7 +2,7 @@
  "source": "glove.6B.300d (Wikipedia 2014 + Gigaword 5, 6B tokens, 400k uncased vocabulary)",
  "zip": "data/glove/glove.6B.zip",
  "glove_lines_read": 400000,
- "read_seconds": 8.268442773260176,
+ "read_seconds": 7.858338764868677,
  "coverage": {
   "vocab_word_types": 25000,
   "covered_types": 24690,
@@ -10,8 +10,9 @@
   "lm_train_word_tokens_excl_specials": 11888579,
   "covered_tokens": 11882084,
   "pct_lm_train_word_tokens_covered": 99.94536773486554,
-  "pct_lm_train_tokens_covered_counting_unk_as_uncovered": 99.94536773486554,
-  "unk_tokens_in_lm_train": 0
+  "pct_lm_train_tokens_covered_counting_unk_as_uncovered": 97.9354492746671,
+  "unk_tokens_in_lm_train": 243988,
+  "unk_count_source": "counted in data/streams/lm_train.npy (vocab.json stores 0 for <unk>)"
  },
  "most_frequent_uncovered_words": [
   {

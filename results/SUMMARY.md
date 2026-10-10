@@ -33,7 +33,7 @@ config+env, every-50-step training stats, per-epoch LM-val, LM-test, summary) an
 
 ## Part II — embedding variants on the LSTM
 - `results/part2/word2vec_training.json` — gensim parameters, worker count, training time, coverage, per-dimension std of the own embeddings.
-- `results/part2/glove_coverage.json` — GloVe type and token coverage, 30 most frequent uncovered words, missing-word initialisation details, per-dimension std.
+- `results/part2/glove_coverage.json` — GloVe type and token coverage (in-vocabulary word tokens, and all word positions with `<unk>` counted as uncovered; `<unk>` counted in the LM-train stream), 30 most frequent uncovered words, missing-word initialisation details, per-dimension std.
 - `results/part2/config_check.json` — Part I LSTM configs vs Part II configs (identical except embedding fields).
 - `results/part2/main_table.csv` — settings A/B/C: trainable parameters, frozen-checksum flags, test CE/PPL mean ± std and per seed, best epochs, training time, embedding per-dimension std at init and after training.
 - `results/part2/stability.csv` — across-seed std, max/mean pre-clip gradient norm, loss-spike counts (definition included), non-finite steps.
@@ -63,6 +63,8 @@ config+env, every-50-step training stats, per-epoch LM-val, LM-test, summary) an
 - `results/part3/predictions/*.npy` — P(positive) on the test set for every feature set (and the ablation).
 - `results/part3/ablation_last255.csv` — optional ablation: last 255 vs first 255 tokens for the best LM (lstm_own), both poolings.
 - `results/part3/classify_meta.json` — split sizes, bootstrap settings, C grid, tie rule, selected pair.
+- `results/part3/split_overlap.json` — index and cleaned-text intersections between LM-train/val/test, the labelled IMDb splits, classifier-train/val and IMDb-test (with the indices of the overlapping classifier-val reviews).
+- `results/part3/val_dedup_sensitivity.csv` — per feature set: committed chosen C, refit chosen C, and the chosen C when classifier-val excludes reviews duplicated in classifier-train (and in IMDb-test), with val accuracy per C.
 - `results/part3/glove_uncovered_subsets.csv` — IMDb-test split by whether the input contains a GloVe-uncovered vocabulary word: n, accuracy of lstm_mean / lstm_own_mean / lstm_glove_mean, paired-bootstrap CI of (own − glove).
 - `results/part3/error_group_truncation.csv` — per error group (both wrong, A right/B wrong, B right/A wrong, both right): n, truncated share vs the overall test share, and the borderline share (wrong model's P(positive) in [0.4, 0.6]) for the disagreement groups, for each error-analysis pair.
 - `results/part1/generation_brackets.csv` — per model (Part I and Part II): "(" opened within the first 40 generated tokens, fraction closed by a matching ")" in the same sample, fraction of samples with an even number of `"` tokens.

@@ -2,8 +2,10 @@
 
 `probes`  -> results/part1/lr_probes.csv, lr_selected.json (Stage 3)
 `main`    -> results/part1/run_summary.csv (per run: status, early stopping, best epoch, flags,
-             probe consistency, train-val gap), main_table.csv, loss_by_position.csv and the figures:
-             part1_curves_{model}, part1_val_curves, part1_loss_by_position, part1_ngram_order.
+             probe consistency, train-val gap), main_table.csv, the figure-value CSVs (curves_{model}, val_curves,
+             learning_curves, loss_by_position, loss_by_position_binned, ngram_order_figure) and the figures
+             part1_curves_{model}, part1_val_curves, part1_learning_curves, part1_loss_by_position (log-spaced bins),
+             part1_loss_by_position_raw and part1_ngram_order (no in-figure titles).
 """
 from __future__ import annotations
 

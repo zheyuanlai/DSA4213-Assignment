@@ -1,4 +1,4 @@
-# Error-analysis samples: A = `lstm_own_mean`, B = `lstm_glove_mean` (highest classifier-val accuracy among the 10 LM feature sets; ties by val macro-F1 then table order (D22))
+# Error-analysis samples: A = `lstm_own_mean`, B = `lstm_glove_mean` (highest classifier-val accuracy among the 10 LM feature sets; ties keep the table order (stable sort))
 
 15 reviews per group sampled with seed 0; first 120 words of the cleaned text. Columns: true label (1 = positive), P(positive) under A and B, review length in tokens, truncated flag.
 

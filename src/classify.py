@@ -1,14 +1,18 @@
-"""Part III classifiers (TASK §6, user additions D32/D33/D46 and the TASK §6 optional ablation).
+"""Part III classifiers (TASK §6, user additions D32/D33/D46/D91–D93/D107 and the TASK §6 optional ablation).
 
 Every feature set uses the same procedure: Pipeline(StandardScaler, LogisticRegression(lbfgs,
-max_iter 2000, C)) with C from {0.01, 0.1, 1, 10} chosen by accuracy on the 2,500-review classifier-
-val split (ties -> smaller C), fit on the 22,500 classifier-train reviews, evaluated once on the
-25,000 IMDb-test reviews. Baselines: TF-IDF (uni+bigrams, top 100k, no scaler because rows are
-L2-normalised, D32) and the masked mean of the frozen GloVe table, over the very same inputs.
-Metrics: accuracy and macro-F1 with 95 % bootstrap CIs (1,000 resamples, seed 0, identical resample
-indices for every set); D46 robustness subset = test reviews whose cleaned text does not occur in
-IMDb-train; accuracy by full-review-length bucket; error-analysis exports for the two best LM sets
-by classifier-val accuracy; LM-vs-downstream table.
+max_iter 2000, C)) with C from the grid in configs/part3/classify.yaml ({0.01, 0.1, 1, 10, 100, 1000})
+chosen by accuracy on the 2,500-review classifier-val split (ties -> smaller C, D80), fit on the 22,500
+classifier-train reviews, evaluated once on the 25,000 IMDb-test reviews. Baselines over the very same
+inputs: TF-IDF (uni+bigrams, top 100k, no scaler because rows are L2-normalised, D32) and the masked means
+of three embedding tables (frozen GloVe; own word2vec and the trained Part I LSTM seed-0 table via
+--mode extra_baselines). Metrics: accuracy and macro-F1 with 95 % bootstrap CIs (1,000 resamples, seed 0,
+identical resample indices for every set); paired bootstrap of accuracy differences (10,000 resamples);
+D46 robustness subset = test reviews whose cleaned text does not occur in IMDb-train; accuracy by
+full-review-length bucket; LM-vs-downstream table; error-analysis exports for the two LM feature sets with
+the highest classifier-val accuracy (ties keep table order) and for pairs chosen by design.
+Modes: main | ablation (last 255 tokens, best LM) | extra_baselines | exports (rebuild the error exports
+from the saved predictions, no fitting).
 """
 from __future__ import annotations
 
@@ -178,13 +182,14 @@ def paired_bootstrap(cfg, probs: dict, yte: np.ndarray, lms: dict) -> pd.DataFra
 
 
 def error_exports(cfg, results: pd.DataFrame, probs: dict, inp_test: dict, out_dir, labels, pair=None, tag=None) -> dict:
-    """Error-analysis CSV + markdown samples for a pair (default: the two best LM sets by classifier-val accuracy, D22;
+    """Error-analysis CSV + markdown samples for a pair (default: the two LM sets with the highest classifier-val accuracy;
+    ties keep the table order — the val macro-F1 tie-break written in D22 was never implemented and no tie occurred;
     an explicit `pair` = (A, B) chosen by design writes files suffixed with the pair names)."""
     lm_sets = results[results.kind == "lm"].sort_values(["val_acc"], ascending=False, kind="stable")   # val accuracy only (D22)
     ranking = lm_sets[["feature_set", "val_acc"]].to_dict("records")
     if pair is None:
         A, B = ranking[0]["feature_set"], ranking[1]["feature_set"]
-        md_name, json_name, rule = "error_samples.md", "best_pair.json", "highest classifier-val accuracy among the 10 LM feature sets; ties by val macro-F1 then table order (D22)"
+        md_name, json_name, rule = "error_samples.md", "best_pair.json", "highest classifier-val accuracy among the 10 LM feature sets; ties keep the table order (stable sort)"
     else:
         A, B = pair
         md_name, json_name, rule = f"error_samples_{A}_vs_{B}.md", f"pair_{A}_vs_{B}.json", f"pair chosen by design ({tag}), not by results"
@@ -221,7 +226,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/part3/classify.yaml")
     ap.add_argument("--limit", type=int, default=None)
-    ap.add_argument("--mode", choices=["main", "ablation", "extra_baselines"], default="main")
+    ap.add_argument("--mode", choices=["main", "ablation", "extra_baselines", "exports"], default="main")
     args = ap.parse_args()
     cfg = load_config(args.config, {"limit_reviews": args.limit})   # limit slices the full data (no stream redirect)
     if cfg.get("limit_reviews"):
@@ -231,6 +236,18 @@ def main() -> None:
     (out_dir / "predictions").mkdir(exist_ok=True)
     itos = read_json(ROOT / cfg["streams_dir"] / "vocab.json")["itos"]
 
+    if args.mode == "exports":
+        # rebuild the best-pair and design-chosen error exports from results_table.csv and the saved predictions
+        inputs = load_inputs(derived, "")
+        yte = inputs["test"]["labels"].astype(int)
+        results = pd.read_csv(out_dir / "results_table.csv")
+        probs = {p.stem: np.load(p) for p in (out_dir / "predictions").glob("*.npy") if not p.stem.endswith("_last255")}
+        pair = error_exports(cfg, results, probs, inputs["test"], out_dir, yte)
+        print("best pair:", pair["A"], pair["B"], pair["group_counts"])
+        for extra in cfg.get("extra_error_pairs", []):
+            e = error_exports(cfg, results, probs, inputs["test"], out_dir, yte, pair=tuple(extra), tag="Part II embedding question, D93")
+            print("extra error export:", e["A"], "vs", e["B"], e["group_counts"])
+        return
     if args.mode == "extra_baselines":
         # fit only the extra embedding-mean baselines, append them to the main tables, recompute the paired bootstrap
         inputs = load_inputs(derived, "")

@@ -18,6 +18,7 @@ python -m src.classify --config configs/part3/classify.yaml --mode ablation "$@"
 python -m src.classify --config configs/part3/classify.yaml --mode extra_baselines "$@"
 # follow-up checks, Part III figure and captions read existing full-mode outputs only (skipped in smoke mode)
 if [ $# -eq 0 ]; then
+  python -m src.analysis.split_checks all            # split overlaps + C-selection sensitivity to duplicated val reviews
   python -m src.analysis.followup_checks all
   python -m src.analysis.part3_tables
   python -m src.analysis.captions

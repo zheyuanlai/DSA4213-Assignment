@@ -365,7 +365,8 @@ engineering soundness, reproducibility) confirmed 12 findings; the following dec
   `results/part2/word2vec_training.json`; coverage 100 % by construction (`<pad>` = zeros). Smoke
   run first (1 % of the stream, 1 epoch).
 - D79 — GloVe (setting C): `glove.6B.300d` read from the zip; coverage 24,690 / 25,000 word types
-  (98.76 %) and 99.95 % of LM-train word tokens (99.84 % if `<unk>` tokens count as uncovered);
+  (98.76 %) and 99.95 % of LM-train word tokens [corrected in D121: 97.935 % if `<unk>` tokens count as
+  uncovered — the 99.84 % first written here came from no result file];
   310 missing words + `<unk>` + `<eos>` initialised N(0, σ_d²) per dimension with σ_d from the
   covered vectors (mean σ 0.358, seed 0); `<pad>` zeros. The GloVe file contains no literal
   `<unk>`/`<eos>`/`<pad>` strings. The 30 most frequent uncovered words are hyphenated compounds
@@ -580,3 +581,46 @@ engineering soundness, reproducibility) confirmed 12 findings; the following dec
 - D120 — Provenance of `results/part1/test_overfit.json`: every test-suite run rewrites it. The committed
   version comes from CPU runs (steps to < 0.5 nats: RNN 221, LSTM 214, Transformer 29; reproduced exactly
   by the final run, 41 passed); the Stage-3 GPU run recorded in D62 gave 213 / 215 / 29. Both pass.
+
+## Fixes after an external code review (2026-10-11) — no LM retraining, reported results unchanged
+
+An external review (ChatGPT, supplied by the user "for reference") was checked claim by claim; the
+code-level items it raised are handled below, the report-writing advice is outside this repository.
+
+- D121 — **Bug fix (GloVe coverage):** `src/glove.py` read the `<unk>` count from `vocab.json`, where `<unk>`
+  is stored with count 0, so `glove_coverage.json` reported 0 unknown tokens and gave 99.945 % for the
+  "counting `<unk>` as uncovered" figure. `<unk>` is now counted in `data/streams/lm_train.npy`: 243,988
+  occurrences. Corrected coverage: 98.76 % of vocabulary types; 99.945 % of the 11,888,579 in-vocabulary
+  word tokens; **97.935 %** of all LM-train word positions when `<unk>` counts as uncovered. The rebuilt
+  GloVe table is byte-identical and its SHA-256 equals the one logged by every C run, so no model is
+  affected. **My own error:** D79, the Stage-5 report and the morning report stated "99.84 %" for the
+  `<unk>`-as-uncovered figure; that number came from no result file. All three are now annotated with the
+  corrected value.
+- D122 — **Check (split integrity):** `src/analysis/split_checks.py` records every train/val/test
+  intersection in `results/part3/split_overlap.json`: LM splits are review- and text-disjoint and share no
+  text with the labelled splits; classifier-train/val partition IMDb-train; 26 classifier-val reviews
+  (25 duplicate groups, labels agree) have an identical copy in classifier-train and 14 occur in IMDb-test.
+  Because the review-level stratified split is not group-disjoint, classifier-val accuracy could be
+  optimistic for C selection. Refitting all 14 feature sets with the unchanged procedure shows that the
+  chosen C is the same with those reviews removed from classifier-val (26, or 26 + 14) as with the full
+  classifier-val, and every refit reproduces the committed choice
+  (`results/part3/val_dedup_sensitivity.csv`). The final classifiers depend only on classifier-train and C,
+  so no reported test number depends on the overlap; a group-disjoint re-split was therefore not done.
+  Listed as a limitation in README §9.
+- D123 — **Tests added (41 → 57):** neural padding invariance of the masked LM loss (test (c) previously
+  covered only the n-gram, although its docstring promised the neural models); `build_inputs` first/last
+  truncation; exact `last`/`mean` pooling with a stub model; padding- and batch-invariance of the extracted
+  features for the three real architectures; incremental decoding equals full-prefix scoring for RNN, LSTM
+  and Transformer; `<pad>`/`<unk>` suppression, greedy = argmax and top-k sampling; split integrity
+  (skipped before `prepare_data.sh`), including a check that `split_overlap.json` matches a recomputation.
+- D124 — **Documentation fixes in `src/classify.py`:** the module docstring now states the 6-value C grid and
+  all baselines and modes. The best-pair rule recorded in `best_pair.json` claimed a val macro-F1 tie-break
+  (D22) that was never implemented — the code sorts by classifier-val accuracy and keeps the table order on
+  ties. No tie occurred (top three: 0.8736, 0.8688, 0.8664), so the selected pair is the same under either
+  rule; the description was corrected rather than the rule retrofitted. A new `--mode exports` rebuilds the
+  error exports from the saved predictions without fitting: only the rule text in `best_pair.json` and the
+  first line of `error_samples.md` changed, every CSV and sample is byte-identical. Stale module docstrings
+  in `part1_tables.py` / `part2_tables.py` were updated; `run_part3.sh` now also runs `split_checks`.
+- D125 — Review items **not** acted on: report structure, wording and example selection (the author's
+  writing; TASK §9 excludes report prose here); extra downstream seeds (optional in the review, and they
+  would be new experiments); a group-disjoint classifier split (unnecessary given D122).

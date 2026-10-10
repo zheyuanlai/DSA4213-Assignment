@@ -1,13 +1,23 @@
 """TASK §3 test (c): adding extra pad positions does not change the loss.
 
 A sequence of T < 256 tokens is scored once as a single unpadded block of length T and once right-
-padded to 256; the masked mean CE must be identical. Neural models are added to MODELS in Stage 3.
+padded to 256; the masked mean CE must be identical, for the KN n-gram and for every neural model
+(neural: CPU fp32, eval mode, real architectures, tolerance 1e-5).
 """
 import numpy as np
 import pytest
+import torch
 
 from src.evaluate import make_blocks, score_blocks, summarize
+from src.models import build_model, logprob_fn_for
 from src.ngram import KneserNeyLM
+
+V = 25003
+NEURAL = {
+    "rnn": {"type": "rnn", "hidden": 1072, "dropout": 0.3},
+    "lstm": {"type": "lstm", "hidden": 512, "dropout": 0.3},
+    "transformer": {"type": "transformer", "dropout": 0.1},
+}
 
 
 def _ce_two_ways(logprob_fn, seq, L=256):
@@ -37,3 +47,14 @@ def test_make_blocks_layout():
     s = np.arange(3, 3 + 9)  # (n-1) % L == 0 → no padding
     x, y = make_blocks(s, L=4)
     assert x.shape == (2, 4) and (y != 0).all()
+
+
+@pytest.mark.parametrize("name", list(NEURAL))
+def test_padding_neural(name):
+    torch.manual_seed(0)
+    model = build_model(NEURAL[name], V).eval()
+    rng = np.random.default_rng(3)
+    seq = np.concatenate([[2], rng.integers(3, V, size=96)])
+    s1, s2 = _ce_two_ways(logprob_fn_for(model, torch.device("cpu")), seq)
+    assert s1["n_targets"] == s2["n_targets"] == 96
+    assert abs(s1["ce"] - s2["ce"]) < 1e-5, (name, s1["ce"], s2["ce"])

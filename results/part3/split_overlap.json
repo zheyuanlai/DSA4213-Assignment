@@ -1,0 +1,88 @@
+{
+ "lm_splits": {
+  "sizes": {
+   "lm_val": 2000,
+   "lm_test": 2000,
+   "lm_train": 44885
+  },
+  "index_overlaps": {
+   "lm_train&lm_val": 0,
+   "lm_train&lm_test": 0,
+   "lm_val&lm_test": 0
+  },
+  "text_overlaps": {
+   "lm_train&lm_val": 0,
+   "lm_train&lm_test": 0,
+   "lm_val&lm_test": 0
+  },
+  "text_overlap_with_labelled_train_or_test": {
+   "lm_val": 0,
+   "lm_test": 0,
+   "lm_train": 0
+  }
+ },
+ "labelled": {
+  "imdb_train_duplicate_text_groups": 94,
+  "imdb_train_extra_copies": 98,
+  "imdb_test_extra_copies": 201,
+  "imdb_train_test_shared_texts": 123,
+  "imdb_test_reviews_with_text_in_imdb_train": 123
+ },
+ "classifier_split": {
+  "sizes": {
+   "clf_train": 22500,
+   "clf_val": 2500
+  },
+  "index_overlap": 0,
+  "union": 25000,
+  "duplicate_groups_split_across_train_and_val": 25,
+  "clf_val_reviews_with_text_in_clf_train": 26,
+  "labels_agree_within_split_groups": true,
+  "clf_val_reviews_with_text_in_imdb_test": 14,
+  "clf_train_reviews_with_text_in_imdb_test": 109,
+  "clf_val_idx_with_text_in_clf_train": [
+   168,
+   699,
+   2068,
+   2787,
+   3070,
+   4867,
+   5028,
+   5103,
+   6540,
+   7116,
+   7373,
+   7874,
+   9392,
+   9987,
+   12309,
+   12310,
+   13261,
+   13447,
+   15712,
+   16820,
+   19362,
+   20259,
+   20738,
+   21741,
+   22673,
+   24513
+  ],
+  "clf_val_idx_with_text_in_imdb_test": [
+   9345,
+   9351,
+   9354,
+   9359,
+   9370,
+   9371,
+   9599,
+   10146,
+   10148,
+   12405,
+   20824,
+   20825,
+   20827,
+   21075
+  ]
+ }
+}

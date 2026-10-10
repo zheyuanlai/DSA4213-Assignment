@@ -1,7 +1,10 @@
-"""Part II tables and figures (TASK §5, user additions D34/D57).
+"""Part II tables and figures (TASK §5, user additions D34/D57/D94/D95/D108/D115).
 
 Outputs under results/part2/: main_table.csv, stability.csv, embedding_std.csv, freq_buckets.csv,
-config_check.json, nearest_neighbours.md; figures part2_val_curves, part2_train_curves, part2_freq_buckets.
+context_freq_buckets.csv, *_diff_vs_A.csv, config_check.json, nearest_neighbours.md, the C-scaled control
+tables (ablation_glove_scaled.csv, stability_glove_scaled.csv, *_with_scaled.csv) and the figure-value CSVs;
+figures part2_val_curves, part2_train_curves, part2_freq_buckets / part2_context_freq_buckets (difference to A)
+and their *_abs versions (no in-figure titles).
 """
 from __future__ import annotations
 

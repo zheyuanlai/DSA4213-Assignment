@@ -80,7 +80,8 @@ in the four shell scripts, which can also be run in smoke mode (`--limit N` / `s
 
 ```bash
 bash scripts/prepare_data.sh                 # Stage 1: download, clean, tokenise, de-dup, split, vocab, streams (~1 min)
-python -m pytest tests/ -q                   # 41 tests: tokeniser, causality (a), KN normalisation (b), padding (c), overfit (d), uniform check
+python -m pytest tests/ -q                   # 57 tests: tokeniser, causality (a), KN normalisation (b), padding (c, n-gram and neural), overfit (d), uniform
+                                             # check, feature pooling/padding, incremental decoding, split integrity (split tests skip before prepare_data.sh)
 bash scripts/run_part1.sh                    # Stage 2-4: KN n-gram, parameter table, smoke runs, LR probes, 9 full runs, timing, generation, tables, figures
 bash scripts/run_part2.sh                    # Stage 5: word2vec, GloVe, 2 smoke + 6 frozen-embedding runs, C-scaled control (smoke + 3 runs), generation, tables, figures
 bash scripts/run_part3.sh                    # Stage 6: features, classifiers (6-value C grid), 4 baselines, paired bootstrap, error exports, ablation, follow-up checks, figure, captions
@@ -118,7 +119,10 @@ recorded in its log (`results/runs/<run>/log.jsonl`, record 0, `env`).
 - Part II (`configs/part2/`): LSTM as above; B = own gensim skip-gram (300d, window 5, 10 negatives,
   5 epochs, min_count 1, seed 0, 16 workers) on the vocabulary-mapped LM-train stream, frozen;
   C = GloVe 6B 300d, frozen; missing words ~ N(0, σ_d²) with σ_d the per-dimension std of the
-  covered vectors (seed 0); `<pad>` zeros; `<unk>`/`<eos>` initialised as missing words. The whole
+  covered vectors (seed 0); `<pad>` zeros; `<unk>`/`<eos>` initialised as missing words. GloVe covers
+  98.76 % of the 25,000 vocabulary words, 99.945 % of the in-vocabulary LM-train word tokens and 97.935 % of
+  all LM-train word positions when the 243,988 `<unk>` tokens count as uncovered
+  (`results/part2/glove_coverage.json`). The whole
   input table is frozen (SHA-256 verified before/after training). Extra control (outside the main
   table): C-scaled = the GloVe table multiplied by one scalar so its mean per-dimension std equals the
   word2vec table's (`configs/part2/lstm_glovescaled_seed*.yaml`, `results/part2/ablation_glove_scaled.csv`).
@@ -156,11 +160,12 @@ repeats, `torch.cuda.synchronize()`, median; nvidia-smi snapshot before each run
 configs/   one YAML per run (data, model, optimiser, seed); probes/, smoke/, part1/, part2/, part3/
 src/       data.py tokenize.py vocab.py ngram.py models.py train_lm.py evaluate.py generate.py
            timing.py word2vec.py glove.py features.py classify.py common.py
-           analysis/{plots,part1_tables,part2_tables,part3_tables,followup_checks,captions}.py
+           analysis/{plots,part1_tables,part2_tables,part3_tables,followup_checks,split_checks,captions}.py
 scripts/   prepare_data.sh run_part1.sh run_part2.sh run_part2_scaled.sh run_part3.sh make_configs.py wait_gpu.py clean_clone_smoke.sh
 tests/     test_tokenize.py test_causality.py test_ngram_normalisation.py test_padding.py test_overfit.py test_evaluate_uniform.py
+           test_features.py test_generate.py test_splits.py
 results/   env.json SUMMARY.md part1/ part2/ part3/ figures/ runs/<run>/{log.jsonl,steps.npz}
-docs/      TASK.md (specification) PLAN.md (stage-0 plan) NOTES.md (decision log D1–D120)
+docs/      TASK.md (specification) PLAN.md (stage-0 plan) NOTES.md (decision log D1–D125)
 data/ checkpoints/   git-ignored (raw data, streams, embeddings, derived arrays, checkpoints)
 ```
 
@@ -187,6 +192,12 @@ working files (progress log, stop-point reports) that are not part of the publis
 - Three checks: GloVe-uncovered words in Part III inputs (`results/part3/glove_uncovered_subsets.csv`),
   truncation/borderline shares per error group (`results/part3/error_group_truncation.csv`), and
   bracket/quote closure in generations (`results/part1/generation_brackets.csv`).
+- Split integrity (`src/analysis/split_checks.py`): every train/validation/test intersection is recorded in
+  `results/part3/split_overlap.json`. LM splits share no text with each other or with the labelled data;
+  26 classifier-val reviews have an identical, same-label copy in classifier-train. Refitting every
+  classifier with those reviews (and the 14 val reviews duplicated in IMDb-test) removed from classifier-val
+  leaves the chosen C unchanged for all 14 feature sets (`results/part3/val_dedup_sensitivity.csv`), so the
+  overlap affects no reported test number.
 - Nearest neighbours (`results/part2/nearest_neighbours.md`) compare the word2vec, GloVe and trained
   LSTM seed-0 embedding tables.
 
@@ -213,6 +224,9 @@ dumped to CSV, and each figure has a one-line caption in `results/figures/CAPTIO
 - **Numerical reproducibility**: lbfgs refits are not bit-reproducible (multi-threaded BLAS), so
   identical C settings can differ in the 4th decimal between runs; cuDNN RNN kernels and gensim
   multi-worker training are not bit-deterministic either.
+- **Classifier-val duplicates**: IMDb-train contains 98 duplicate reviews, and the stratified
+  classifier split is not group-disjoint, so 26 classifier-val reviews also occur in classifier-train.
+  This does not change any chosen C (§8), but classifier-val accuracies are slightly optimistic.
 - **Single dataset**: all language models, embeddings and classifiers use IMDb only (unsupervised
   split for the LMs, labelled splits for Part III); GloVe is the only external data.
 - **Setting A reuse**: in the Part II generation and bracket/quote tables, A is the very same checkpoint
