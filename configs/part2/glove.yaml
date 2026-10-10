@@ -1,0 +1,8 @@
+# Part II setting C: public GloVe 6B 300d (Wikipedia 2014 + Gigaword 5, uncased), frozen (TASK §5).
+zip_path: data/glove/glove.6B.zip
+member: glove.6B.300d.txt
+streams_dir: data/streams
+out_table: data/embeddings/glove_300.npy
+out_json: results/part2/glove_coverage.json
+init_seed: 0            # N(0, sigma_d^2) init of missing words, sigma_d = per-dimension std of covered vectors
+n_uncovered_listed: 30

@@ -1,0 +1,30 @@
+{
+ "B-own": {
+  "identical_except_embedding_and_run_name": true,
+  "differences": {},
+  "embedding_A": {
+   "init": "random",
+   "path": null,
+   "freeze": false
+  },
+  "embedding_B-own": {
+   "init": "file",
+   "path": "data/embeddings/word2vec_300.npy",
+   "freeze": true
+  }
+ },
+ "C-glove": {
+  "identical_except_embedding_and_run_name": true,
+  "differences": {},
+  "embedding_A": {
+   "init": "random",
+   "path": null,
+   "freeze": false
+  },
+  "embedding_C-glove": {
+   "init": "file",
+   "path": "data/embeddings/glove_300.npy",
+   "freeze": true
+  }
+ }
+}

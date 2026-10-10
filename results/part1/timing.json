@@ -1,0 +1,391 @@
+{
+ "env": {
+  "timestamp": "2026-10-01T17:02:51+0000",
+  "hostname": "atlas",
+  "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "python": "3.11.15",
+  "cpu_model": "AMD EPYC 9554 64-Core Processor",
+  "cpu_logical_cores": 256,
+  "loadavg_1_5_15": [
+   17.9267578125,
+   14.55322265625,
+   14.69677734375
+  ],
+  "torch": "2.14.1+cu126",
+  "torch_cuda": "12.6",
+  "cudnn": 91002,
+  "numpy": "2.4.6",
+  "CUDA_VISIBLE_DEVICES": "2",
+  "OMP_NUM_THREADS": "1",
+  "tf32_matmul": true,
+  "tf32_cudnn": true,
+  "pandas": "3.0.6",
+  "sklearn": "1.9.1",
+  "gensim": "4.4.0",
+  "datasets": "5.0.1",
+  "matplotlib": "3.11.2",
+  "yaml": "6.0.3",
+  "scipy": "1.17.1",
+  "gpu_name": "NVIDIA H200 NVL",
+  "gpu_capability": [
+   9,
+   0
+  ],
+  "gpu_mem_free_gib": 138.74,
+  "gpu_mem_total_gib": 139.8,
+  "nvidia_smi_snapshot": [
+   "0, NVIDIA H200 NVL, 100 %, 115245 MiB, 143771 MiB",
+   "1, NVIDIA H200 NVL, 100 %, 29177 MiB, 143771 MiB",
+   "2, NVIDIA H200 NVL, 0 %, 1083 MiB, 143771 MiB",
+   "3, NVIDIA H200 NVL, 87 %, 1567 MiB, 143771 MiB"
+  ],
+  "nvidia_driver": "580.105.08\n580.105.08\n580.105.08\n580.105.08"
+ },
+ "cpu_model": "AMD EPYC 9554 64-Core Processor",
+ "workload_a": {
+  "rnn": {
+   "run": "part1/rnn_s0",
+   "device": "NVIDIA H200 NVL",
+   "n_targets": 547241,
+   "n_blocks": 2138,
+   "batch_size": 64,
+   "times_s": [
+    0.38064529933035374,
+    0.38130173925310373,
+    0.38043541833758354,
+    0.38058938831090927,
+    0.38057794887572527
+   ],
+   "median_tokens_per_s": 1437877.7149533934,
+   "ce_check": 4.595177041890597,
+   "gpu_before": {
+    "gpu_index": 2,
+    "snapshot": [
+     {
+      "index": 0,
+      "util_pct": 100,
+      "mem_used_mib": 115245,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 1,
+      "util_pct": 94,
+      "mem_used_mib": 29177,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 2,
+      "util_pct": 0,
+      "mem_used_mib": 1343,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 3,
+      "util_pct": 87,
+      "mem_used_mib": 1567,
+      "mem_total_mib": 143771
+     }
+    ],
+    "other_process_mem_mib": 528,
+    "loadavg": [
+     17.6923828125,
+     14.56103515625,
+     14.69873046875
+    ],
+    "attempts": 1,
+    "time": "2026-10-01T17:02:54"
+   }
+  },
+  "lstm": {
+   "run": "part1/lstm_s0",
+   "device": "NVIDIA H200 NVL",
+   "n_targets": 547241,
+   "n_blocks": 2138,
+   "batch_size": 64,
+   "times_s": [
+    0.31313157081604004,
+    0.3136624712496996,
+    0.3132918095216155,
+    0.3137474311515689,
+    0.31304177083075047
+   ],
+   "median_tokens_per_s": 1746745.313372909,
+   "ce_check": 4.324860492613946,
+   "gpu_before": {
+    "gpu_index": 2,
+    "snapshot": [
+     {
+      "index": 0,
+      "util_pct": 100,
+      "mem_used_mib": 115245,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 1,
+      "util_pct": 100,
+      "mem_used_mib": 29177,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 2,
+      "util_pct": 0,
+      "mem_used_mib": 1515,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 3,
+      "util_pct": 86,
+      "mem_used_mib": 1567,
+      "mem_total_mib": 143771
+     }
+    ],
+    "other_process_mem_mib": 528,
+    "loadavg": [
+     17.4765625,
+     14.568359375,
+     14.70068359375
+    ],
+    "attempts": 1,
+    "time": "2026-10-01T17:03:01"
+   }
+  },
+  "transformer": {
+   "run": "part1/transformer_s0",
+   "device": "NVIDIA H200 NVL",
+   "n_targets": 547241,
+   "n_blocks": 2138,
+   "batch_size": 64,
+   "times_s": [
+    0.28431814163923264,
+    0.2843019114807248,
+    0.2842998616397381,
+    0.2842162912711501,
+    0.2846526615321636
+   ],
+   "median_tokens_per_s": 1924858.6727743545,
+   "ce_check": 4.167013945875661,
+   "gpu_before": {
+    "gpu_index": 2,
+    "snapshot": [
+     {
+      "index": 0,
+      "util_pct": 99,
+      "mem_used_mib": 115245,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 1,
+      "util_pct": 95,
+      "mem_used_mib": 29177,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 2,
+      "util_pct": 0,
+      "mem_used_mib": 1503,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 3,
+      "util_pct": 85,
+      "mem_used_mib": 1567,
+      "mem_total_mib": 143771
+     }
+    ],
+    "other_process_mem_mib": 528,
+    "loadavg": [
+     16.95751953125,
+     14.5087890625,
+     14.6806640625
+    ],
+    "attempts": 1,
+    "time": "2026-10-01T17:03:07"
+   }
+  },
+  "ngram": {
+   "run": "checkpoints/ngram/kn_selected.npz",
+   "device": "CPU: AMD EPYC 9554 64-Core Processor",
+   "n_targets": 547241,
+   "n_blocks": 2138,
+   "batch_size": 64,
+   "times_s": [
+    1.0041656801477075,
+    1.0054147504270077,
+    1.0098906904459,
+    1.0068090707063675,
+    1.0120350392535329
+   ],
+   "median_tokens_per_s": 543539.9977237601,
+   "ce_check": 4.85553822494349,
+   "OMP_NUM_THREADS": "1",
+   "loadavg_before": [
+    16.19482421875,
+    14.42578125,
+    14.6513671875
+   ]
+  }
+ },
+ "workload_b": {
+  "rnn": {
+   "run": "part1/rnn_s0",
+   "device": "NVIDIA H200 NVL",
+   "n_steps_timed": 300,
+   "median_ms_per_token": 0.28988486155867577,
+   "mean_ms_per_token": 0.2938970861335595,
+   "prompt_encode_ms_mean": 0.4095599055290222,
+   "decoding": "greedy",
+   "n_new_tokens": 60,
+   "gpu_before": {
+    "gpu_index": 2,
+    "snapshot": [
+     {
+      "index": 0,
+      "util_pct": 99,
+      "mem_used_mib": 115245,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 1,
+      "util_pct": 94,
+      "mem_used_mib": 29177,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 2,
+      "util_pct": 0,
+      "mem_used_mib": 4831,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 3,
+      "util_pct": 87,
+      "mem_used_mib": 1567,
+      "mem_total_mib": 143771
+     }
+    ],
+    "other_process_mem_mib": 528,
+    "loadavg": [
+     17.6923828125,
+     14.56103515625,
+     14.69873046875
+    ],
+    "attempts": 1,
+    "time": "2026-10-01T17:02:59"
+   }
+  },
+  "lstm": {
+   "run": "part1/lstm_s0",
+   "device": "NVIDIA H200 NVL",
+   "n_steps_timed": 300,
+   "median_ms_per_token": 0.2925405278801918,
+   "mean_ms_per_token": 0.3506335988640785,
+   "prompt_encode_ms_mean": 0.5191422998905182,
+   "decoding": "greedy",
+   "n_new_tokens": 60,
+   "gpu_before": {
+    "gpu_index": 2,
+    "snapshot": [
+     {
+      "index": 0,
+      "util_pct": 100,
+      "mem_used_mib": 115245,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 1,
+      "util_pct": 100,
+      "mem_used_mib": 29177,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 2,
+      "util_pct": 0,
+      "mem_used_mib": 4889,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 3,
+      "util_pct": 85,
+      "mem_used_mib": 1567,
+      "mem_total_mib": 143771
+     }
+    ],
+    "other_process_mem_mib": 528,
+    "loadavg": [
+     16.95751953125,
+     14.5087890625,
+     14.6806640625
+    ],
+    "attempts": 1,
+    "time": "2026-10-01T17:03:05"
+   }
+  },
+  "transformer": {
+   "run": "part1/transformer_s0",
+   "device": "NVIDIA H200 NVL",
+   "n_steps_timed": 300,
+   "median_ms_per_token": 1.6918848268687725,
+   "mean_ms_per_token": 1.7055054971327384,
+   "prompt_encode_ms_mean": 1.7502138391137123,
+   "decoding": "greedy",
+   "n_new_tokens": 60,
+   "gpu_before": {
+    "gpu_index": 2,
+    "snapshot": [
+     {
+      "index": 0,
+      "util_pct": 100,
+      "mem_used_mib": 115245,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 1,
+      "util_pct": 95,
+      "mem_used_mib": 29177,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 2,
+      "util_pct": 0,
+      "mem_used_mib": 4921,
+      "mem_total_mib": 143771
+     },
+     {
+      "index": 3,
+      "util_pct": 85,
+      "mem_used_mib": 1567,
+      "mem_total_mib": 143771
+     }
+    ],
+    "other_process_mem_mib": 528,
+    "loadavg": [
+     16.56005859375,
+     14.466796875,
+     14.666015625
+    ],
+    "attempts": 1,
+    "time": "2026-10-01T17:03:10"
+   }
+  },
+  "ngram": {
+   "run": "checkpoints/ngram/kn_selected.npz",
+   "device": "CPU: AMD EPYC 9554 64-Core Processor",
+   "n_steps_timed": 300,
+   "median_ms_per_token": 0.16835983842611313,
+   "mean_ms_per_token": 0.17316094910105068,
+   "prompt_encode_ms_mean": 0.13691410422325134,
+   "decoding": "greedy",
+   "n_new_tokens": 60,
+   "loadavg_before": [
+    16.19482421875,
+    14.42578125,
+    14.6513671875
+   ]
+  }
+ },
+ "notes": {
+  "workload_a": "entire LM-test (2138 blocks of 256) in batches of 64, tokens/s over non-pad targets; 2 warm-ups, 5 timed repeats, median; data resident on device; n-gram on CPU single process",
+  "workload_b": "batch 1, 5 prompts x 60 new tokens, greedy; per-step synchronize; median ms/token over 300 steps; Transformer recomputes the full prefix each step (no KV cache); RNN/LSTM carry hidden state; n-gram on CPU",
+  "idle_rule": "nvidia-smi snapshot before each GPU timing; wait while util > 5% or memory held by other processes > 1500 MiB on the selected GPU"
+ }
+}

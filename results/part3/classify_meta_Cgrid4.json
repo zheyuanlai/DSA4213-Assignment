@@ -1,0 +1,19 @@
+{
+ "classifier_train": 22500,
+ "classifier_val": 2500,
+ "test": 25000,
+ "robust_subset_n": 24877,
+ "robust_excluded_n": 123,
+ "bootstrap": {
+  "n_resamples": 1000,
+  "seed": 0
+ },
+ "C_grid": [
+  0.01,
+  0.1,
+  1.0,
+  10.0
+ ],
+ "tie_rule": "smaller C",
+ "best_pair": "lstm_own_mean / lstm_glove_mean"
+}

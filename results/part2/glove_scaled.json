@@ -1,0 +1,11 @@
+{
+ "source_table": "data/embeddings/glove_300.npy",
+ "target_table": "data/embeddings/word2vec_300.npy",
+ "per_dim_std_glove": 0.35777464509010315,
+ "per_dim_std_word2vec": 0.13474313914775848,
+ "scalar": 0.3766145561092635,
+ "per_dim_std_scaled": 0.1347431242465973,
+ "pad_row_zero": true,
+ "definition": "per-dimension std over all 25,003 rows (incl. <pad>), averaged over the 300 dimensions; one scalar preserves cosine geometry",
+ "out_table": "data/embeddings/glove_300_scaled.npy"
+}

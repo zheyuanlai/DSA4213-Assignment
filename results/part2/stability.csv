@@ -1,0 +1,4 @@
+setting,n_seeds,across_seed_std_test_ce,across_seed_std_best_val_ce,max_grad_norm_max_over_seeds,max_grad_norm_per_seed,mean_grad_norm_mean_over_seeds,loss_spikes_total,loss_spikes_per_seed,non_finite_steps_total,spike_definition
+A-random,3,0.005160562444166646,0.005545201724593878,6.581773281097412,5.97;4.90;6.58,0.1681787669658661,0,0;0;0,0,"per-step train loss > 1.5 x trailing mean of the previous 50 steps, counted from step 51"
+B-own,3,0.003065673544775171,0.003209986994894626,7.81548547744751,6.91;5.33;7.82,0.1702968180179596,0,0;0;0,0,"per-step train loss > 1.5 x trailing mean of the previous 50 steps, counted from step 51"
+C-glove,3,0.005812317653451748,0.005502148427968157,7.484493732452393,7.48;6.16;7.48,0.1687787969907125,0,0;0;0,0,"per-step train loss > 1.5 x trailing mean of the previous 50 steps, counted from step 51"

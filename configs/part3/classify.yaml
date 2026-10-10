@@ -1,0 +1,52 @@
+# Part III: downstream sentiment classification with frozen LMs (TASK §6).
+streams_dir: data/streams
+processed_dir: data/processed
+derived_dir: data/derived/part3
+results_dir: results/part3
+max_review_tokens: 255          # input = <eos> + first 255 review tokens = 256 positions (D19)
+truncate: first                 # 'last' only for the TASK §6 optional ablation
+lms:                            # seed-0 best checkpoints (D21); the n-gram has no representation
+  rnn: part1/rnn_s0
+  lstm: part1/lstm_s0
+  transformer: part1/transformer_s0
+  lstm_own: part2/lstm_ownfrozen_s0
+  lstm_glove: part2/lstm_glovefrozen_s0
+poolings: [last, mean]
+feature_batch_size: 256
+glove_table: data/embeddings/glove_300.npy
+classifier:
+  C_grid: [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]   # extended from 4 to 6 values (user D91); the 4-value results are kept as *_Cgrid4.*
+  solver: lbfgs
+  max_iter: 2000
+  tie_rule: smaller C           # if two C values tie on classifier-val accuracy (PENDING USER REVIEW, D80)
+tfidf:
+  ngram_range: [1, 2]
+  max_features: 100000
+bootstrap:
+  n_resamples: 1000
+  seed: 0
+paired_bootstrap:               # accuracy difference A - B on IMDb-test, same resampled indices for both (user D92)
+  n_resamples: 10000
+  seed: 0
+  pairs:
+    - [lstm_own_mean, lstm_mean]
+    - [lstm_glove_mean, lstm_mean]
+    - [lstm_own_mean, lstm_glove_mean]
+    - [transformer_mean, lstm_mean]
+    - [lstm_mean, rnn_mean]
+    - [lstm_own_mean, transformer_mean]
+    - [tfidf_uni_bi, lstm_own_mean]
+  mean_vs_last_for_every_lm: true
+extra_error_pairs:              # chosen by design, not by test results (user D93)
+  - [lstm_mean, lstm_own_mean]
+extra_embedding_mean_baselines:   # masked mean of an embedding table over the same inputs (user D107); same classifier procedure
+  w2v_mean: data/embeddings/word2vec_300.npy
+  lstmA_emb_mean: checkpoint:part1/lstm_s0    # trained input-embedding table of the Part I LSTM, seed 0
+extra_paired_pairs:
+  - [w2v_mean, glove_mean]
+  - [w2v_mean, lstmA_emb_mean]
+length_buckets: [128, 256]      # <=128, 129-256, >256 tokens (full review length)
+error_samples_per_group: 15
+error_sample_words: 120
+error_sample_seed: 0
+limit_reviews: null             # smoke: --limit N

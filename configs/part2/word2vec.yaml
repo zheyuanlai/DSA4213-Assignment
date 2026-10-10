@@ -1,0 +1,12 @@
+# Part II setting B: own word2vec (gensim skip-gram) on the vocabulary-mapped LM-train stream (TASK §5).
+streams_dir: data/streams
+out_table: data/embeddings/word2vec_300.npy
+out_json: results/part2/word2vec_training.json
+vector_size: 300
+window: 5
+negative: 10
+sg: 1
+epochs: 5
+min_count: 1
+seed: 0
+workers: 16            # multi-worker gensim is not bit-reproducible (README)

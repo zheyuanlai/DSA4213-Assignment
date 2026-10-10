@@ -1,0 +1,55 @@
+{
+ "stats": {
+  "truncate": "first",
+  "max_review_tokens": 255,
+  "device": "cuda",
+  "train": {
+   "n_reviews": 25000,
+   "n_truncated": 9038,
+   "pct_truncated": 36.152,
+   "mean_full_length_tokens": 269.12224,
+   "median_full_length_tokens": 201.0,
+   "mean_input_positions_incl_eos": 194.10464,
+   "unk_rate_of_inputs": 0.023266763553687782,
+   "input_review_tokens": 4827616
+  },
+  "test": {
+   "n_reviews": 25000,
+   "n_truncated": 8671,
+   "pct_truncated": 34.684,
+   "mean_full_length_tokens": 263.0862,
+   "median_full_length_tokens": 199.0,
+   "mean_input_positions_incl_eos": 192.55276,
+   "unk_rate_of_inputs": 0.023294678708884173,
+   "input_review_tokens": 4788819
+  }
+ },
+ "feature_extraction": {
+  "rnn": {
+   "run": "part1/rnn_s0",
+   "epoch": 12,
+   "seconds_train_and_test": 1.8442893642932177
+  },
+  "lstm": {
+   "run": "part1/lstm_s0",
+   "epoch": 12,
+   "seconds_train_and_test": 1.501971554942429
+  },
+  "transformer": {
+   "run": "part1/transformer_s0",
+   "epoch": 12,
+   "seconds_train_and_test": 2.998535320162773
+  },
+  "lstm_own": {
+   "run": "part2/lstm_ownfrozen_s0",
+   "epoch": 12,
+   "seconds_train_and_test": 1.521634405478835
+  },
+  "lstm_glove": {
+   "run": "part2/lstm_glovefrozen_s0",
+   "epoch": 12,
+   "seconds_train_and_test": 1.489679366350174
+  }
+ },
+ "representation": "300-d pre-head vector (RNN/LSTM: projection output; Transformer: final-LayerNorm output); last = last non-pad position; mean = masked mean"
+}

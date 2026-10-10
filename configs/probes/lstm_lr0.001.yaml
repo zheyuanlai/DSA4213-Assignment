@@ -1,0 +1,33 @@
+seed: 0
+data:
+  streams_dir: data/streams
+  block_length: 256
+  train_fraction: 1.0
+embedding:
+  init: random
+  path: null
+  freeze: false
+optim:
+  lr: 0.001
+  weight_decay: 0.01
+  betas:
+  - 0.9
+  - 0.999
+  eps: 1.0e-08
+  warmup_steps: 300
+  final_lr_fraction: 0.1
+  grad_clip: 1.0
+  batch_size: 64
+train:
+  max_epochs: 1
+  schedule_epochs: 12
+  patience: 3
+  evaluate_test: false
+  log_every: 50
+run_name: probes/lstm_lr0.001
+model:
+  type: lstm
+  d_model: 300
+  hidden: 512
+  n_layers: 2
+  dropout: 0.3

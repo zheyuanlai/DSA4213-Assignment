@@ -1,0 +1,160 @@
+{
+ "source": "glove.6B.300d (Wikipedia 2014 + Gigaword 5, 6B tokens, 400k uncased vocabulary)",
+ "zip": "data/glove/glove.6B.zip",
+ "glove_lines_read": 400000,
+ "read_seconds": 8.268442773260176,
+ "coverage": {
+  "vocab_word_types": 25000,
+  "covered_types": 24690,
+  "pct_types_covered": 98.76,
+  "lm_train_word_tokens_excl_specials": 11888579,
+  "covered_tokens": 11882084,
+  "pct_lm_train_word_tokens_covered": 99.94536773486554,
+  "pct_lm_train_tokens_covered_counting_unk_as_uncovered": 99.94536773486554,
+  "unk_tokens_in_lm_train": 0
+ },
+ "most_frequent_uncovered_words": [
+  {
+   "word": "camera-work",
+   "lm_train_count": 210
+  },
+  {
+   "word": "snowblood",
+   "lm_train_count": 74
+  },
+  {
+   "word": "god-awful",
+   "lm_train_count": 71
+  },
+  {
+   "word": "nukie",
+   "lm_train_count": 69
+  },
+  {
+   "word": "imho",
+   "lm_train_count": 67
+  },
+  {
+   "word": "0/10",
+   "lm_train_count": 65
+  },
+  {
+   "word": "nanon",
+   "lm_train_count": 61
+  },
+  {
+   "word": "xtro",
+   "lm_train_count": 54
+  },
+  {
+   "word": "ffolkes",
+   "lm_train_count": 51
+  },
+  {
+   "word": "film-noir",
+   "lm_train_count": 51
+  },
+  {
+   "word": "over-acting",
+   "lm_train_count": 49
+  },
+  {
+   "word": "mind-numbing",
+   "lm_train_count": 48
+  },
+  {
+   "word": "wongo",
+   "lm_train_count": 45
+  },
+  {
+   "word": "cheezy",
+   "lm_train_count": 44
+  },
+  {
+   "word": "elfen",
+   "lm_train_count": 43
+  },
+  {
+   "word": "8.5/10",
+   "lm_train_count": 42
+  },
+  {
+   "word": "re-watch",
+   "lm_train_count": 42
+  },
+  {
+   "word": "mantee",
+   "lm_train_count": 42
+  },
+  {
+   "word": "pammy",
+   "lm_train_count": 42
+  },
+  {
+   "word": "korvo",
+   "lm_train_count": 42
+  },
+  {
+   "word": "eye-candy",
+   "lm_train_count": 42
+  },
+  {
+   "word": "by-the-numbers",
+   "lm_train_count": 41
+  },
+  {
+   "word": "bad-ass",
+   "lm_train_count": 40
+  },
+  {
+   "word": "mind-numbingly",
+   "lm_train_count": 38
+  },
+  {
+   "word": "so-bad-it",
+   "lm_train_count": 38
+  },
+  {
+   "word": "encolpio",
+   "lm_train_count": 37
+  },
+  {
+   "word": "cringe-worthy",
+   "lm_train_count": 35
+  },
+  {
+   "word": "jayston",
+   "lm_train_count": 34
+  },
+  {
+   "word": "over-rated",
+   "lm_train_count": 34
+  },
+  {
+   "word": "wanna-be",
+   "lm_train_count": 33
+  }
+ ],
+ "n_missing_words_random_init": 310,
+ "init": {
+  "rule": "missing word w ~ N(0, sigma_d^2) independently per dimension d; sigma_d = std over covered vectors of dimension d; numpy default_rng(init_seed)",
+  "init_seed": 0,
+  "sigma_mean_over_dims": 0.35774603486061096,
+  "sigma_min": 0.3105620741844177,
+  "sigma_max": 0.8801606297492981,
+  "<pad>": "zeros",
+  "<unk>": "random init as a missing word (not a GloVe word)",
+  "<eos>": "random init as a missing word (not a GloVe word)",
+  "literal_special_strings_present_in_glove_file": {}
+ },
+ "per_dim_std_mean": {
+  "covered_vectors": 0.35774603486061096,
+  "random_init_vectors": 0.35710957646369934,
+  "whole_table_excl_pad": 0.35778170824050903
+ },
+ "mean_vector_norm": {
+  "covered": 6.27160120010376,
+  "random_init": 6.259093284606934
+ },
+ "out_table": "data/embeddings/glove_300.npy"
+}

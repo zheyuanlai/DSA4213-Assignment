@@ -1,0 +1,33 @@
+seed: 0
+data:
+  streams_dir: data/streams
+  block_length: 256
+  train_fraction: 0.01
+embedding:
+  init: file
+  path: data/embeddings/word2vec_300.npy
+  freeze: true
+optim:
+  lr: 0.001
+  weight_decay: 0.01
+  betas:
+  - 0.9
+  - 0.999
+  eps: 1.0e-08
+  warmup_steps: 5
+  final_lr_fraction: 0.1
+  grad_clip: 1.0
+  batch_size: 64
+train:
+  max_epochs: 2
+  schedule_epochs: 2
+  patience: 3
+  evaluate_test: false
+  log_every: 50
+run_name: smoke/lstm_ownfrozen
+model:
+  type: lstm
+  d_model: 300
+  hidden: 512
+  n_layers: 2
+  dropout: 0.3

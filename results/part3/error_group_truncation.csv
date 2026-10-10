@@ -1,0 +1,9 @@
+pair,group,n,truncated_share,overall_test_truncated_share,wrong_model_borderline_share_0.4_0.6
+A=lstm_mean vs B=lstm_own_mean,both wrong,2088,0.4501915708812261,0.34684,
+A=lstm_mean vs B=lstm_own_mean,"A right, B wrong",909,0.4598459845984598,0.34684,0.42244224422442245
+A=lstm_mean vs B=lstm_own_mean,"B right, A wrong",1714,0.3868144690781797,0.34684,0.40840140023337224
+A=lstm_mean vs B=lstm_own_mean,both right,20289,0.3277638129035438,0.34684,
+A=lstm_own_mean vs B=lstm_glove_mean,both wrong,2175,0.4629885057471264,0.34684,
+A=lstm_own_mean vs B=lstm_glove_mean,"A right, B wrong",1015,0.44729064039408867,0.34684,0.45320197044334976
+A=lstm_own_mean vs B=lstm_glove_mean,"B right, A wrong",822,0.42700729927007297,0.34684,0.46472019464720193
+A=lstm_own_mean vs B=lstm_glove_mean,both right,20988,0.32680579378692587,0.34684,

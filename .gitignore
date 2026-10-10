@@ -1,0 +1,26 @@
+# data, embeddings, checkpoints and large derived arrays are never committed
+data/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+glove*.zip
+glove*.txt
+*.kv
+*.kv.vectors.npy
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# editor / os
+.vscode/
+.idea/
+.DS_Store
+*.swp
+results/smoke/

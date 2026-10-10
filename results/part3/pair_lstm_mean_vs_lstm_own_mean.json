@@ -1,0 +1,54 @@
+{
+ "A": "lstm_mean",
+ "B": "lstm_own_mean",
+ "rule": "pair chosen by design (Part II embedding question, D93), not by results",
+ "ranking_by_val_acc": [
+  {
+   "feature_set": "lstm_own_mean",
+   "val_acc": 0.8736
+  },
+  {
+   "feature_set": "lstm_glove_mean",
+   "val_acc": 0.8688
+  },
+  {
+   "feature_set": "transformer_mean",
+   "val_acc": 0.8664
+  },
+  {
+   "feature_set": "lstm_glove_last",
+   "val_acc": 0.8596
+  },
+  {
+   "feature_set": "lstm_own_last",
+   "val_acc": 0.8488
+  },
+  {
+   "feature_set": "lstm_mean",
+   "val_acc": 0.8356
+  },
+  {
+   "feature_set": "transformer_last",
+   "val_acc": 0.834
+  },
+  {
+   "feature_set": "rnn_mean",
+   "val_acc": 0.7904
+  },
+  {
+   "feature_set": "lstm_last",
+   "val_acc": 0.7848
+  },
+  {
+   "feature_set": "rnn_last",
+   "val_acc": 0.6368
+  }
+ ],
+ "group_counts": {
+  "both wrong": 2088,
+  "A (lstm_mean) right, B (lstm_own_mean) wrong": 909,
+  "B (lstm_own_mean) right, A (lstm_mean) wrong": 1714
+ },
+ "csv": "error_analysis_lstm_mean_vs_lstm_own_mean.csv",
+ "markdown": "error_samples_lstm_mean_vs_lstm_own_mean.md"
+}

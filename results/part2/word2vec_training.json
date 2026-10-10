@@ -1,0 +1,65 @@
+{
+ "method": "gensim Word2Vec skip-gram with negative sampling",
+ "params": {
+  "vector_size": 300,
+  "window": 5,
+  "negative": 10,
+  "sg": 1,
+  "epochs": 5,
+  "min_count": 1,
+  "seed": 0,
+  "workers": 16
+ },
+ "gensim_version": "4.4.0",
+ "training_seconds": 105.90566372312605,
+ "training_time_hms": "00:01:45",
+ "cpu_model": "AMD EPYC 9554 64-Core Processor",
+ "loadavg_after": [
+  27.3046875,
+  19.2119140625,
+  16.41552734375
+ ],
+ "n_sentences": 44885,
+ "n_tokens": 12177452,
+ "stream_fraction": 1.0,
+ "vocab_ids_with_vector": 25002,
+ "coverage_types_pct": 100.0,
+ "coverage_note": "all ids except <pad> occur in the LM-train stream, so coverage of the vocabulary (incl. <unk>, <eos>) is 100 % by construction; <pad> = zeros",
+ "per_dim_std_mean": 0.13474486768245697,
+ "mean_vector_norm": 2.654787063598633,
+ "special_tokens": {
+  "<pad>": "zeros (never observed)",
+  "<unk>": "trained vector (occurs in the mapped stream)",
+  "<eos>": "trained vector (ends every review)"
+ },
+ "out_table": "data/embeddings/word2vec_300.npy",
+ "env": {
+  "timestamp": "2026-10-01T18:52:17+0000",
+  "hostname": "atlas",
+  "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "python": "3.11.15",
+  "cpu_model": "AMD EPYC 9554 64-Core Processor",
+  "cpu_logical_cores": 256,
+  "loadavg_1_5_15": [
+   26.0791015625,
+   19.091796875,
+   16.3916015625
+  ],
+  "torch": "2.14.1+cu126",
+  "torch_cuda": "12.6",
+  "cudnn": 91002,
+  "numpy": "2.4.6",
+  "CUDA_VISIBLE_DEVICES": null,
+  "OMP_NUM_THREADS": null,
+  "tf32_matmul": false,
+  "tf32_cudnn": true,
+  "pandas": "3.0.6",
+  "sklearn": "1.9.1",
+  "gensim": "4.4.0",
+  "datasets": "5.0.1",
+  "matplotlib": "3.11.2",
+  "yaml": "6.0.3",
+  "scipy": "1.17.1",
+  "gpu_name": null
+ }
+}

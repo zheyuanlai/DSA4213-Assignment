@@ -1,0 +1,25 @@
+{
+ "truncate": "first",
+ "max_review_tokens": 255,
+ "device": "cuda",
+ "train": {
+  "n_reviews": 25000,
+  "n_truncated": 9038,
+  "pct_truncated": 36.152,
+  "mean_full_length_tokens": 269.12224,
+  "median_full_length_tokens": 201.0,
+  "mean_input_positions_incl_eos": 194.10464,
+  "unk_rate_of_inputs": 0.023266763553687782,
+  "input_review_tokens": 4827616
+ },
+ "test": {
+  "n_reviews": 25000,
+  "n_truncated": 8671,
+  "pct_truncated": 34.684,
+  "mean_full_length_tokens": 263.0862,
+  "median_full_length_tokens": 199.0,
+  "mean_input_positions_incl_eos": 192.55276,
+  "unk_rate_of_inputs": 0.023294678708884173,
+  "input_review_tokens": 4788819
+ }
+}

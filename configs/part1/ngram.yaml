@@ -1,0 +1,14 @@
+# Part I n-gram model (TASK §4.1): interpolated Kneser–Ney, selection on LM-val only.
+streams_dir: data/streams
+results_dir: results/part1
+derived_dir: data/derived/part1
+model_out: checkpoints/ngram/kn_selected.npz
+block_length: 256
+batch_size: 64
+
+candidate_orders: [3, 4]                          # the 14 pre-specified candidates
+discounts: [0.5, 0.6, 0.7, 0.75, 0.8, 0.9]         # single discount applied at every level
+include_modified_kn: true                         # Chen–Goodman count-of-count D1/D2/D3+ per level
+fallback_discounts: [0.5, 1.0, 1.5]               # used at a level if any n_k = 0 or an estimate <= 0
+reference_orders_modified_kn: [1, 2, 5]           # reference rows only; never selected
+limit_reviews: null

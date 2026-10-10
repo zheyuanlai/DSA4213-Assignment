@@ -1,0 +1,23 @@
+# Data pipeline configuration (TASK §2). Every path is relative to the repo root.
+hf_name: stanfordnlp/imdb
+hf_cache: data/hf_cache
+processed_dir: data/processed        # cleaned + tokenised reviews (jsonl), split indices
+streams_dir: data/streams            # vocab + int32 token streams
+results_dir: results/part1           # data_stats.json, tokenisation_examples.md, vocab.tsv
+
+vocab_size: 25000                    # most frequent LM-train tokens; specials added on top
+specials: ["<pad>", "<unk>", "<eos>"]   # ids 0, 1, 2
+
+lm_val_reviews: 2000
+lm_test_reviews: 2000
+split_seed: 0                        # shuffle of the de-duplicated unsupervised reviews
+
+classifier_val_reviews: 2500         # stratified split of IMDb train (Part III)
+classifier_split_seed: 0
+
+n_examples: 5                        # raw-vs-tokenised examples
+example_seed: 0
+
+# Smoke testing: set via `--limit N` on the command line; keeps only the first N reviews of each
+# HF split and redirects all outputs to data/smoke/ and results/smoke/.
+limit_reviews: null

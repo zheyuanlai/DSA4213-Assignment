@@ -1,0 +1,53 @@
+{
+ "A": "lstm_own_mean",
+ "B": "lstm_glove_mean",
+ "rule": "highest classifier-val accuracy among the 10 LM feature sets; ties by val macro-F1 then table order (D22)",
+ "ranking_by_val_acc": [
+  {
+   "feature_set": "lstm_own_mean",
+   "val_acc": 0.8736
+  },
+  {
+   "feature_set": "lstm_glove_mean",
+   "val_acc": 0.8688
+  },
+  {
+   "feature_set": "transformer_mean",
+   "val_acc": 0.866
+  },
+  {
+   "feature_set": "lstm_glove_last",
+   "val_acc": 0.8588
+  },
+  {
+   "feature_set": "lstm_own_last",
+   "val_acc": 0.8476
+  },
+  {
+   "feature_set": "lstm_mean",
+   "val_acc": 0.8348
+  },
+  {
+   "feature_set": "transformer_last",
+   "val_acc": 0.834
+  },
+  {
+   "feature_set": "rnn_mean",
+   "val_acc": 0.7904
+  },
+  {
+   "feature_set": "lstm_last",
+   "val_acc": 0.7848
+  },
+  {
+   "feature_set": "rnn_last",
+   "val_acc": 0.6368
+  }
+ ],
+ "group_counts": {
+  "both wrong": 2172,
+  "A (lstm_own_mean) right, B (lstm_glove_mean) wrong": 1008,
+  "B (lstm_glove_mean) right, A (lstm_own_mean) wrong": 823
+ },
+ "csv": "error_analysis_lstm_own_mean_vs_lstm_glove_mean.csv"
+}

@@ -1,0 +1,4 @@
+model,n_samples,sample_distinct1,sample_distinct2,sample_rep4_mean,greedy_distinct1,greedy_distinct2,greedy_rep4_mean,checkpoint
+A-random,100,0.11833333333333333,0.4696610169491525,0.0017543859649122805,0.18,0.31186440677966104,0.5578947368421053,checkpoints/part1/lstm_s0/best.pt (epoch 12)
+B-own,100,0.1165,0.4623728813559322,0.004912280701754385,0.14,0.23389830508474577,0.6280701754385966,checkpoints/part2/lstm_ownfrozen_s0/best.pt (epoch 12)
+C-glove,100,0.124,0.47966101694915253,0.003157894736842105,0.13,0.2271186440677966,0.6421052631578947,checkpoints/part2/lstm_glovefrozen_s0/best.pt (epoch 12)

@@ -1,0 +1,32 @@
+{
+ "rnn": {
+  "model": "rnn",
+  "device": "cpu",
+  "batch_source": "lm_train",
+  "step1_loss": 10.116875648498535,
+  "ln_vocab": 10.126751096650914,
+  "steps_to_below_0.5": 221,
+  "final_loss": 0.4838836193084717,
+  "passed": true
+ },
+ "lstm": {
+  "model": "lstm",
+  "device": "cpu",
+  "batch_source": "lm_train",
+  "step1_loss": 10.133159637451172,
+  "ln_vocab": 10.126751096650914,
+  "steps_to_below_0.5": 214,
+  "final_loss": 0.4918404221534729,
+  "passed": true
+ },
+ "transformer": {
+  "model": "transformer",
+  "device": "cpu",
+  "batch_source": "lm_train",
+  "step1_loss": 10.180187225341797,
+  "ln_vocab": 10.126751096650914,
+  "steps_to_below_0.5": 29,
+  "final_loss": 0.4487873613834381,
+  "passed": true
+ }
+}

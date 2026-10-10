@@ -1,0 +1,605 @@
+{
+ "config": {
+  "hf_name": "stanfordnlp/imdb",
+  "hf_cache": "data/hf_cache",
+  "processed_dir": "data/processed",
+  "streams_dir": "data/streams",
+  "results_dir": "results/part1",
+  "vocab_size": 25000,
+  "specials": [
+   "<pad>",
+   "<unk>",
+   "<eos>"
+  ],
+  "lm_val_reviews": 2000,
+  "lm_test_reviews": 2000,
+  "split_seed": 0,
+  "classifier_val_reviews": 2500,
+  "classifier_split_seed": 0,
+  "n_examples": 5,
+  "example_seed": 0,
+  "limit_reviews": null
+ },
+ "hf_raw_sizes": {
+  "train": 25000,
+  "test": 25000,
+  "unsupervised": 50000
+ },
+ "processed_sizes": {
+  "train": 25000,
+  "test": 25000,
+  "unsupervised": 50000
+ },
+ "dedup": {
+  "unsupervised_raw": 50000,
+  "unsupervised_removed_in_labelled_train_or_test": 641,
+  "unsupervised_removed_exact_duplicates_within": 474,
+  "unsupervised_kept": 48885,
+  "labelled_train_test_shared_duplicates_distinct_texts": 123,
+  "labelled_train_test_shared_duplicates_review_pairs": 123,
+  "labelled_train_within_duplicate_reviews": 98,
+  "labelled_test_within_duplicate_reviews": 201,
+  "note": "labelled splits are not modified; duplicates in them are only reported"
+ },
+ "lm_splits_reviews": {
+  "lm_val": 2000,
+  "lm_test": 2000,
+  "lm_train": 44885
+ },
+ "lm_splits_review_tokens_excl_eos": {
+  "lm_val": 536486,
+  "lm_test": 545241,
+  "lm_train": 12132567
+ },
+ "classifier_split_reviews": {
+  "clf_train": 22500,
+  "clf_val": 2500,
+  "clf_val_pos_fraction": 0.5
+ },
+ "imdb_review_tokens": {
+  "train": 6728056,
+  "test": 6577155
+ },
+ "character_census_all_splits": {
+  "reviews": 100000,
+  "non_ascii_raw": {
+   "distinct_chars": 146,
+   "occurrences": 22717,
+   "reviews_affected": 9526,
+   "top30": [
+    {
+     "char": "\u00e9",
+     "codepoint": "U+00E9",
+     "name": "LATIN SMALL LETTER E WITH ACUTE",
+     "category": "Ll",
+     "count": 6730
+    },
+    {
+     "char": "\u0096",
+     "codepoint": "U+0096",
+     "name": "<control>",
+     "category": "Cc",
+     "count": 4984
+    },
+    {
+     "char": "\u0085",
+     "codepoint": "U+0085",
+     "name": "<control>",
+     "category": "Cc",
+     "count": 2999
+    },
+    {
+     "char": "\u0097",
+     "codepoint": "U+0097",
+     "name": "<control>",
+     "category": "Cc",
+     "count": 1330
+    },
+    {
+     "char": "\u00b4",
+     "codepoint": "U+00B4",
+     "name": "ACUTE ACCENT",
+     "category": "Sk",
+     "count": 804
+    },
+    {
+     "char": "\u00e1",
+     "codepoint": "U+00E1",
+     "name": "LATIN SMALL LETTER A WITH ACUTE",
+     "category": "Ll",
+     "count": 417
+    },
+    {
+     "char": "\u2019",
+     "codepoint": "U+2019",
+     "name": "RIGHT SINGLE QUOTATION MARK",
+     "category": "Pf",
+     "count": 415
+    },
+    {
+     "char": "\u00e8",
+     "codepoint": "U+00E8",
+     "name": "LATIN SMALL LETTER E WITH GRAVE",
+     "category": "Ll",
+     "count": 387
+    },
+    {
+     "char": "\u00f6",
+     "codepoint": "U+00F6",
+     "name": "LATIN SMALL LETTER O WITH DIAERESIS",
+     "category": "Ll",
+     "count": 265
+    },
+    {
+     "char": "\u2013",
+     "codepoint": "U+2013",
+     "name": "EN DASH",
+     "category": "Pd",
+     "count": 254
+    },
+    {
+     "char": "\u00ed",
+     "codepoint": "U+00ED",
+     "name": "LATIN SMALL LETTER I WITH ACUTE",
+     "category": "Ll",
+     "count": 244
+    },
+    {
+     "char": "\u00a3",
+     "codepoint": "U+00A3",
+     "name": "POUND SIGN",
+     "category": "Sc",
+     "count": 241
+    },
+    {
+     "char": "\u00f3",
+     "codepoint": "U+00F3",
+     "name": "LATIN SMALL LETTER O WITH ACUTE",
+     "category": "Ll",
+     "count": 239
+    },
+    {
+     "char": "\u00fc",
+     "codepoint": "U+00FC",
+     "name": "LATIN SMALL LETTER U WITH DIAERESIS",
+     "category": "Ll",
+     "count": 221
+    },
+    {
+     "char": "\u00f1",
+     "codepoint": "U+00F1",
+     "name": "LATIN SMALL LETTER N WITH TILDE",
+     "category": "Ll",
+     "count": 215
+    },
+    {
+     "char": "\u0091",
+     "codepoint": "U+0091",
+     "name": "<control>",
+     "category": "Cc",
+     "count": 208
+    },
+    {
+     "char": "\u00e0",
+     "codepoint": "U+00E0",
+     "name": "LATIN SMALL LETTER A WITH GRAVE",
+     "category": "Ll",
+     "count": 174
+    },
+    {
+     "char": "\u00e7",
+     "codepoint": "U+00E7",
+     "name": "LATIN SMALL LETTER C WITH CEDILLA",
+     "category": "Ll",
+     "count": 170
+    },
+    {
+     "char": "\u00a8",
+     "codepoint": "U+00A8",
+     "name": "DIAERESIS",
+     "category": "Sk",
+     "count": 168
+    },
+    {
+     "char": "\u00ef",
+     "codepoint": "U+00EF",
+     "name": "LATIN SMALL LETTER I WITH DIAERESIS",
+     "category": "Ll",
+     "count": 143
+    },
+    {
+     "char": "\u00e4",
+     "codepoint": "U+00E4",
+     "name": "LATIN SMALL LETTER A WITH DIAERESIS",
+     "category": "Ll",
+     "count": 141
+    },
+    {
+     "char": "\u00f4",
+     "codepoint": "U+00F4",
+     "name": "LATIN SMALL LETTER O WITH CIRCUMFLEX",
+     "category": "Ll",
+     "count": 118
+    },
+    {
+     "char": "\u00a0",
+     "codepoint": "U+00A0",
+     "name": "NO-BREAK SPACE",
+     "category": "Zs",
+     "count": 112
+    },
+    {
+     "char": "\u00e3",
+     "codepoint": "U+00E3",
+     "name": "LATIN SMALL LETTER A WITH TILDE",
+     "category": "Ll",
+     "count": 106
+    },
+    {
+     "char": "\u00bb",
+     "codepoint": "U+00BB",
+     "name": "RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK",
+     "category": "Pf",
+     "count": 95
+    },
+    {
+     "char": "\u00ab",
+     "codepoint": "U+00AB",
+     "name": "LEFT-POINTING DOUBLE ANGLE QUOTATION MARK",
+     "category": "Pi",
+     "count": 92
+    },
+    {
+     "char": "\u00e5",
+     "codepoint": "U+00E5",
+     "name": "LATIN SMALL LETTER A WITH RING ABOVE",
+     "category": "Ll",
+     "count": 87
+    },
+    {
+     "char": "\u00bd",
+     "codepoint": "U+00BD",
+     "name": "VULGAR FRACTION ONE HALF",
+     "category": "No",
+     "count": 82
+    },
+    {
+     "char": "\u201c",
+     "codepoint": "U+201C",
+     "name": "LEFT DOUBLE QUOTATION MARK",
+     "category": "Pi",
+     "count": 77
+    },
+    {
+     "char": "\u00e2",
+     "codepoint": "U+00E2",
+     "name": "LATIN SMALL LETTER A WITH CIRCUMFLEX",
+     "category": "Ll",
+     "count": 71
+    }
+   ]
+  },
+  "non_ascii_after_cleaning": {
+   "distinct_chars": 109,
+   "occurrences": 11187,
+   "reviews_affected": 6656,
+   "top30": [
+    {
+     "char": "\u00e9",
+     "codepoint": "U+00E9",
+     "name": "LATIN SMALL LETTER E WITH ACUTE",
+     "category": "Ll",
+     "count": 6758
+    },
+    {
+     "char": "\u00e1",
+     "codepoint": "U+00E1",
+     "name": "LATIN SMALL LETTER A WITH ACUTE",
+     "category": "Ll",
+     "count": 457
+    },
+    {
+     "char": "\u00e8",
+     "codepoint": "U+00E8",
+     "name": "LATIN SMALL LETTER E WITH GRAVE",
+     "category": "Ll",
+     "count": 389
+    },
+    {
+     "char": "\u00f6",
+     "codepoint": "U+00F6",
+     "name": "LATIN SMALL LETTER O WITH DIAERESIS",
+     "category": "Ll",
+     "count": 281
+    },
+    {
+     "char": "\u00ed",
+     "codepoint": "U+00ED",
+     "name": "LATIN SMALL LETTER I WITH ACUTE",
+     "category": "Ll",
+     "count": 248
+    },
+    {
+     "char": "\u00f3",
+     "codepoint": "U+00F3",
+     "name": "LATIN SMALL LETTER O WITH ACUTE",
+     "category": "Ll",
+     "count": 242
+    },
+    {
+     "char": "\u00a3",
+     "codepoint": "U+00A3",
+     "name": "POUND SIGN",
+     "category": "Sc",
+     "count": 241
+    },
+    {
+     "char": "\u00fc",
+     "codepoint": "U+00FC",
+     "name": "LATIN SMALL LETTER U WITH DIAERESIS",
+     "category": "Ll",
+     "count": 233
+    },
+    {
+     "char": "\u00f1",
+     "codepoint": "U+00F1",
+     "name": "LATIN SMALL LETTER N WITH TILDE",
+     "category": "Ll",
+     "count": 223
+    },
+    {
+     "char": "\u00e0",
+     "codepoint": "U+00E0",
+     "name": "LATIN SMALL LETTER A WITH GRAVE",
+     "category": "Ll",
+     "count": 178
+    },
+    {
+     "char": "\u00e7",
+     "codepoint": "U+00E7",
+     "name": "LATIN SMALL LETTER C WITH CEDILLA",
+     "category": "Ll",
+     "count": 174
+    },
+    {
+     "char": "\u00ef",
+     "codepoint": "U+00EF",
+     "name": "LATIN SMALL LETTER I WITH DIAERESIS",
+     "category": "Ll",
+     "count": 144
+    },
+    {
+     "char": "\u00e4",
+     "codepoint": "U+00E4",
+     "name": "LATIN SMALL LETTER A WITH DIAERESIS",
+     "category": "Ll",
+     "count": 143
+    },
+    {
+     "char": "\u00f4",
+     "codepoint": "U+00F4",
+     "name": "LATIN SMALL LETTER O WITH CIRCUMFLEX",
+     "category": "Ll",
+     "count": 119
+    },
+    {
+     "char": "\u00e3",
+     "codepoint": "U+00E3",
+     "name": "LATIN SMALL LETTER A WITH TILDE",
+     "category": "Ll",
+     "count": 109
+    },
+    {
+     "char": "\u00bb",
+     "codepoint": "U+00BB",
+     "name": "RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK",
+     "category": "Pf",
+     "count": 95
+    },
+    {
+     "char": "\u00ab",
+     "codepoint": "U+00AB",
+     "name": "LEFT-POINTING DOUBLE ANGLE QUOTATION MARK",
+     "category": "Pi",
+     "count": 92
+    },
+    {
+     "char": "\u00e5",
+     "codepoint": "U+00E5",
+     "name": "LATIN SMALL LETTER A WITH RING ABOVE",
+     "category": "Ll",
+     "count": 90
+    },
+    {
+     "char": "\u00bd",
+     "codepoint": "U+00BD",
+     "name": "VULGAR FRACTION ONE HALF",
+     "category": "No",
+     "count": 82
+    },
+    {
+     "char": "\u00e2",
+     "codepoint": "U+00E2",
+     "name": "LATIN SMALL LETTER A WITH CIRCUMFLEX",
+     "category": "Ll",
+     "count": 73
+    },
+    {
+     "char": "\u00eb",
+     "codepoint": "U+00EB",
+     "name": "LATIN SMALL LETTER E WITH DIAERESIS",
+     "category": "Ll",
+     "count": 69
+    },
+    {
+     "char": "\u00ea",
+     "codepoint": "U+00EA",
+     "name": "LATIN SMALL LETTER E WITH CIRCUMFLEX",
+     "category": "Ll",
+     "count": 64
+    },
+    {
+     "char": "\u00a1",
+     "codepoint": "U+00A1",
+     "name": "INVERTED EXCLAMATION MARK",
+     "category": "Po",
+     "count": 62
+    },
+    {
+     "char": "\u00fa",
+     "codepoint": "U+00FA",
+     "name": "LATIN SMALL LETTER U WITH ACUTE",
+     "category": "Ll",
+     "count": 57
+    },
+    {
+     "char": "\u00b7",
+     "codepoint": "U+00B7",
+     "name": "MIDDLE DOT",
+     "category": "Po",
+     "count": 45
+    },
+    {
+     "char": "\u00f8",
+     "codepoint": "U+00F8",
+     "name": "LATIN SMALL LETTER O WITH STROKE",
+     "category": "Ll",
+     "count": 42
+    },
+    {
+     "char": "\u2022",
+     "codepoint": "U+2022",
+     "name": "BULLET",
+     "category": "Po",
+     "count": 36
+    },
+    {
+     "char": "\u017e",
+     "codepoint": "U+017E",
+     "name": "LATIN SMALL LETTER Z WITH CARON",
+     "category": "Ll",
+     "count": 36
+    },
+    {
+     "char": "\u00ee",
+     "codepoint": "U+00EE",
+     "name": "LATIN SMALL LETTER I WITH CIRCUMFLEX",
+     "category": "Ll",
+     "count": 28
+    },
+    {
+     "char": "\u00fd",
+     "codepoint": "U+00FD",
+     "name": "LATIN SMALL LETTER Y WITH ACUTE",
+     "category": "Ll",
+     "count": 23
+    }
+   ]
+  },
+  "control_or_format_chars_after_cleaning": 0,
+  "tag_like_patterns_after_cleaning": {
+   "reviews_affected": 23,
+   "reviews_affected_pct": 0.023,
+   "top10": [
+    [
+     "<i>",
+     8
+    ],
+    [
+     "</i>",
+     8
+    ],
+    [
+     "<p>",
+     3
+    ],
+    [
+     "<grin>",
+     2
+    ],
+    [
+     "<sighs>",
+     2
+    ],
+    [
+     "<shakes his head>",
+     2
+    ],
+    [
+     "<hr>",
+     1
+    ],
+    [
+     "<http://rogerebert.suntimes.com/apps/pbc",
+     1
+    ],
+    [
+     "<spoiler>",
+     1
+    ],
+    [
+     "</spoiler>",
+     1
+    ]
+   ]
+  },
+  "mojibake_sequences_after_cleaning": {}
+ },
+ "data_py_seconds": 36.5,
+ "vocab": {
+  "size_incl_specials": 25003,
+  "specials": {
+   "<pad>": 0,
+   "<unk>": 1,
+   "<eos>": 2
+  },
+  "distinct_lm_train_types": 127311,
+  "min_count_in_vocab": 12,
+  "last_vocab_token": "siding"
+ },
+ "unk_rates_token_level_excl_eos": {
+  "lm_train": {
+   "tokens": 12132567,
+   "unk": 243988,
+   "unk_rate": 0.02011017124405742
+  },
+  "lm_val": {
+   "tokens": 536486,
+   "unk": 11799,
+   "unk_rate": 0.021993118180157544
+  },
+  "lm_test": {
+   "tokens": 545241,
+   "unk": 11919,
+   "unk_rate": 0.021860058212790308
+  },
+  "imdb_train": {
+   "tokens": 6728056,
+   "unk": 163146,
+   "unk_rate": 0.0242486091078909
+  },
+  "imdb_test": {
+   "tokens": 6577155,
+   "unk": 159108,
+   "unk_rate": 0.024191006597837513
+  }
+ },
+ "streams": {
+  "lm_train": {
+   "reviews": 44885,
+   "stream_tokens_incl_eos": 12177453,
+   "unk_targets_in_stream": 243988
+  },
+  "lm_val": {
+   "reviews": 2000,
+   "stream_tokens_incl_eos": 538487,
+   "unk_targets_in_stream": 11799
+  },
+  "lm_test": {
+   "reviews": 2000,
+   "stream_tokens_incl_eos": 547242,
+   "unk_targets_in_stream": 11919
+  }
+ },
+ "vocab_py_seconds": 7.8
+}

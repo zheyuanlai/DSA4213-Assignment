@@ -1,0 +1,35 @@
+seed: 2
+data:
+  streams_dir: data/streams
+  block_length: 256
+  train_fraction: 1.0
+embedding:
+  init: random
+  path: null
+  freeze: false
+optim:
+  lr: 0.002
+  weight_decay: 0.01
+  betas:
+  - 0.9
+  - 0.999
+  eps: 1.0e-08
+  warmup_steps: 300
+  final_lr_fraction: 0.1
+  grad_clip: 1.0
+  batch_size: 64
+train:
+  max_epochs: 12
+  schedule_epochs: 12
+  patience: 3
+  evaluate_test: true
+  log_every: 50
+run_name: part1/transformer_s2
+model:
+  type: transformer
+  d_model: 300
+  n_layers: 4
+  n_heads: 6
+  ffn: 1200
+  dropout: 0.1
+  max_len: 256

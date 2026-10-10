@@ -1,0 +1,24 @@
+# Smoke configuration for Part III: Stage-3/5 smoke checkpoints as the five LMs (pipeline check only).
+streams_dir: data/streams
+processed_dir: data/processed
+derived_dir: data/smoke/derived/part3
+results_dir: results/smoke/part3
+max_review_tokens: 255
+truncate: first
+lms:
+  rnn: smoke/rnn
+  lstm: smoke/lstm
+  transformer: smoke/transformer
+  lstm_own: smoke/lstm_ownfrozen
+  lstm_glove: smoke/lstm_glovefrozen
+poolings: [last, mean]
+feature_batch_size: 256
+glove_table: data/embeddings/glove_300.npy
+classifier: {C_grid: [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0], solver: lbfgs, max_iter: 2000, tie_rule: smaller C}
+tfidf: {ngram_range: [1, 2], max_features: 100000}
+bootstrap: {n_resamples: 1000, seed: 0}
+length_buckets: [128, 256]
+error_samples_per_group: 15
+error_sample_words: 120
+error_sample_seed: 0
+limit_reviews: 500

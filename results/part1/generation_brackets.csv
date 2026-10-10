@@ -1,0 +1,8 @@
+part,model,n_samples,open_parens_first40,fraction_closed_later,fraction_samples_even_double_quotes
+Part I,ngram,100,13,0.07692307692307693,0.85
+Part I,rnn,100,4,1.0,0.94
+Part I,lstm,100,10,1.0,1.0
+Part I,transformer,100,5,1.0,0.97
+Part II,A-random,100,10,1.0,1.0
+Part II,B-own,100,6,1.0,1.0
+Part II,C-glove,100,9,1.0,0.99
