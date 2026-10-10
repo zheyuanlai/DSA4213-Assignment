@@ -224,7 +224,6 @@ def fig_curves(prefix: str, m: str, label: str, stem: str) -> list[str]:
                 pd.DataFrame({"series": "val_ce", "epoch": ep, "mean": mv, "std": val.std(axis=0, ddof=1) if len(runs) > 1 else 0.0})]
         plots.dump(pd.concat(rows, ignore_index=True), f"results/{prefix}/curves_{m}.csv")
     ax.set_xlabel("epoch"); ax.set_ylabel("cross-entropy (nats/token)")
-    ax.set_title(f"{plots.LABELS.get(label, label)}: training and validation loss (mean ± std)")
     ax.legend()
     return plots.save(fig, stem)
 
@@ -246,16 +245,16 @@ def fig_val_curves(prefix: str, models, labels, stem: str, ngram_val_ce: float |
         rows.append(pd.DataFrame({"model": "ngram", "epoch": [None], "val_ce_mean": [ngram_val_ce], "val_ce_std": [None]}))
     plots.dump(pd.concat(rows, ignore_index=True), f"results/{prefix}/val_curves.csv")
     ax.set_xlabel("epoch"); ax.set_ylabel("LM-val cross-entropy (nats/token)")
-    ax.set_title(f"LM-val cross-entropy per epoch (mean ± std)")
     ax.legend()
     return plots.save(fig, stem)
 
 
 def fig_learning_curves(prefix: str, models, labels, stem: str, ngram_val_ce: float | None) -> list[str]:
     """1×3 panels (RNN, LSTM, Transformer), shared y: training loss (50-step means) and LM-val CE per epoch as the
-    mean over runs with a min–max band, plus the n-gram LM-val CE as a dashed reference line."""
-    fig, axes = plots.new_figure(width=plots.HALF_PAGE_IN, height=1.9, ncols=len(models), sharey=True,
-                                 gridspec_kw={"wspace": 0.08})
+    mean with a min–max band, plus the n-gram LM-val CE as a dashed reference line. Constrained layout: the panels
+    fill the canvas and the legend sits below them, within the figure width."""
+    fig, axes = plots.new_figure(width=plots.HALF_PAGE_IN, height=2.25, ncols=len(models), sharey=True, layout="constrained")
+    fig.get_layout_engine().set(w_pad=0.01, h_pad=0.01, wspace=0.02)
     rows = []
     for ax, m in zip(np.atleast_1d(axes), models):
         lab = labels[m]
@@ -267,19 +266,68 @@ def fig_learning_curves(prefix: str, models, labels, stem: str, ngram_val_ce: fl
         mv, lv, hv = _band(ax, ep, val, lab, "LM-val CE", lw=1.0, band="minmax", ls="--", alpha_band=0.3)
         if ngram_val_ce is not None:
             ax.axhline(ngram_val_ce, color=plots.COLORS["ngram"], ls="--", lw=0.7)
-        ax.set_title(plots.LABELS.get(lab, lab), fontsize=7)
+        ax.text(0.95, 0.95, plots.LABELS.get(lab, lab), transform=ax.transAxes, ha="right", va="top", fontsize=7,
+                color=plots.COLORS[lab])                                   # panel label (not a figure title)
         ax.set_xlabel("epoch", fontsize=7); ax.tick_params(labelsize=6)
-        ax.set_xticks([1, 4, 8, 12])
+        ax.set_xticks([1, 4, 8, 12]); ax.set_xlim(0, 12.6)
         rows += [pd.DataFrame({"model": lab, "series": "train_loss_50step", "epoch": x_tr, "mean": mt, "min": lt, "max": ht}),
                  pd.DataFrame({"model": lab, "series": "val_ce", "epoch": ep, "mean": mv, "min": lv, "max": hv})]
     np.atleast_1d(axes)[0].set_ylabel("cross-entropy (nats/token)", fontsize=7)
     np.atleast_1d(axes)[0].set_ylim(3.6, 7.0)
     from matplotlib.lines import Line2D
-    handles = [Line2D([], [], color="#777777", ls="-", lw=0.9, label="training loss (50-step mean)"),
-               Line2D([], [], color="#777777", ls="--", lw=1.0, marker="o", ms=3, label="LM-val cross-entropy (markers)"),
-               Line2D([], [], color=plots.COLORS["ngram"], ls="--", lw=0.7, label=plots.LABELS["ngram"] + " LM-val CE")]
-    fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=6, frameon=False, bbox_to_anchor=(0.5, 1.06))
+    handles = [Line2D([], [], color="#666666", ls="-", lw=0.9, label="training loss (50-step mean)"),
+               Line2D([], [], color="#666666", ls="--", lw=1.0, marker="o", ms=3, label="LM-val CE"),
+               Line2D([], [], color=plots.COLORS["ngram"], ls="--", lw=0.7, label="KN 4-gram LM-val CE")]
+    fig.legend(handles=handles, loc="outside lower center", ncol=3, fontsize=5.5, frameon=False,
+               handlelength=1.8, columnspacing=1.0, borderaxespad=0.1)
     plots.dump(pd.concat(rows, ignore_index=True), f"results/{prefix}/learning_curves.csv")
+    return plots.save(fig, stem)
+
+
+POSITION_BINS = [(1, 1), (2, 3), (4, 7), (8, 15), (16, 31), (32, 63), (64, 127), (128, 256)]
+
+
+def _bin_label(lo: int, hi: int) -> str:
+    return str(lo) if lo == hi else f"{lo}–{hi}"
+
+
+def fig_loss_by_position_binned(prefix: str, models, labels, ngram_ce_path: str | None, out_csv: str, stem: str) -> list[str]:
+    """Mean LM-test CE per log-spaced position bin (token-weighted over the non-pad targets of the bin); neural models:
+    mean ± std of the per-run bin means; n-gram: single deterministic model (no error bar)."""
+    def bin_means(ce: np.ndarray):
+        means, counts = [], []
+        for lo, hi in POSITION_BINS:
+            block = ce[:, lo - 1:hi]
+            means.append(float(np.nanmean(block))); counts.append(int(np.isfinite(block).sum()))
+        return np.array(means), counts
+    series = {}
+    if ngram_ce_path and (ROOT / ngram_ce_path).exists():
+        mvals, counts = bin_means(np.load(ROOT / ngram_ce_path).astype(np.float64))
+        series["ngram"] = (mvals, None, counts)
+    for m in models:
+        per_run = []
+        for s in SEEDS:
+            p = ROOT / "data/derived" / prefix / f"{m}_s{s}" / "test_ce.npy"
+            if p.exists():
+                mv_, counts = bin_means(np.load(p).astype(np.float64)); per_run.append(mv_)
+        if per_run:
+            A = np.array(per_run)
+            series[labels[m]] = (A.mean(axis=0), A.std(axis=0, ddof=1) if len(per_run) > 1 else np.zeros(A.shape[1]), counts)
+    rows = []
+    fig, ax = plots.new_figure(height=2.4)
+    x = np.arange(len(POSITION_BINS))
+    offsets = np.linspace(-0.15, 0.15, len(series))
+    for off, (key, (mean, std, counts)) in zip(offsets, series.items()):
+        st = plots.style(key)
+        ax.errorbar(x + off, mean, yerr=std, color=st["color"], ls=st["ls"], marker=st["marker"], ms=3.2, lw=0.9,
+                    capsize=1.8, elinewidth=0.8, label=plots.LABELS.get(key, key))
+        for (lo, hi), mval, sval, n in zip(POSITION_BINS, mean, std if std is not None else [None] * len(mean), counts):
+            rows.append({"model": key, "bin": _bin_label(lo, hi), "position_lo": lo, "position_hi": hi,
+                         "mean_ce": mval, "std_ce": sval, "n_targets_per_model": n})
+    ax.set_xticks(x); ax.set_xticklabels([_bin_label(lo, hi) for lo, hi in POSITION_BINS], fontsize=6.5, rotation=30, ha="right")
+    ax.set_xlabel("position in the 256-token block (bin)"); ax.set_ylabel("mean LM-test CE (nats/token)")
+    ax.legend(loc="upper right")
+    plots.dump(pd.DataFrame(rows), out_csv)
     return plots.save(fig, stem)
 
 
@@ -308,7 +356,6 @@ def loss_by_position(prefix: str, models, labels, ngram_ce_path: str | None, out
             ax.fill_between(df.position, v - bands[k], v + bands[k], color=st["color"], alpha=0.25, linewidth=0)
         ax.plot(df.position, v, color=st["color"], ls=st["ls"], lw=0.9, marker=st["marker"], ms=2.5, markevery=[0, 1, 3, 7, 15, 31, 63, 127, 255], label=plots.LABELS.get(k, k))
     ax.set_xscale("log"); ax.set_xlabel("position in 256-token block (log scale)"); ax.set_ylabel("mean LM-test CE (nats/token)")
-    ax.set_title(f"Loss by position on LM-test (neural models: mean ± std)")
     ax.legend()
     return plots.save(fig, stem), df
 
@@ -328,7 +375,6 @@ def fig_ngram_order(stem: str) -> list[str]:
     ax2.set_ylabel("model memory (MB)"); ax2.grid(False)
     h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
     ax.legend(h1 + h2, l1 + l2, loc="upper center")
-    ax.set_title("n-gram order vs LM-val perplexity and memory")
     plots.dump(d[["order", "val_ce", "val_ppl", "memory_mb", "n_stored_total"]], "results/part1/ngram_order_figure.csv")
     return plots.save(fig, stem)
 
@@ -359,8 +405,10 @@ def main() -> None:
     figs += fig_val_curves("part1", MODELS, {m: m for m in MODELS}, "part1_val_curves", ngram["val"]["ce"] if ngram else None)
     figs += fig_learning_curves("part1", MODELS, {m: m for m in MODELS}, "part1_learning_curves", ngram["val"]["ce"] if ngram else None)
     f, _ = loss_by_position("part1", MODELS, {m: m for m in MODELS}, "data/derived/part1/ngram_test_ce.npy",
-                            "results/part1/loss_by_position.csv", "part1_loss_by_position")
+                            "results/part1/loss_by_position.csv", "part1_loss_by_position_raw")
     figs += f
+    figs += fig_loss_by_position_binned("part1", MODELS, {m: m for m in MODELS}, "data/derived/part1/ngram_test_ce.npy",
+                                        "results/part1/loss_by_position_binned.csv", "part1_loss_by_position")
     figs += fig_ngram_order("part1_ngram_order")
     print(rs.drop(columns=["val_ce_history"]).to_string(index=False))
     print(); print(mt.to_string(index=False))

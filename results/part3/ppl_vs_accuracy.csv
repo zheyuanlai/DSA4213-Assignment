@@ -1,13 +1,13 @@
-lm,pooling,feature_set,lm_test_ppl_seed0,test_acc,acc_ci95_lo,acc_ci95_hi
-rnn,mean,rnn_mean,99.0056621457572,0.79968,0.7947989999999999,0.804921
-rnn,last,rnn_last,99.0056621457572,0.651,0.645038,0.656683
-lstm,mean,lstm_mean,75.55497164785729,0.84792,0.8434780000000001,0.8522810000000001
-lstm,last,lstm_last,75.55497164785729,0.79416,0.7890389999999999,0.799122
-transformer,mean,transformer_mean,64.52249649605317,0.87908,0.874799,0.8830410000000001
-transformer,last,transformer_last,64.52249649605317,0.8394,0.834679,0.843761
-lstm_own,mean,lstm_own_mean,76.89782337168428,0.88012,0.876119,0.884201
-lstm_own,last,lstm_own_last,76.89782337168428,0.86688,0.8629180000000001,0.8710019999999999
-lstm_glove,mean,lstm_glove_mean,77.8637216302043,0.8724,0.8683989999999999,0.876441
-lstm_glove,last,lstm_glove_last,77.8637216302043,0.86552,0.861678,0.8698
-tfidf_uni_bi,baseline,tfidf_uni_bi,,0.88084,,
-w2v_mean,baseline,w2v_mean,,0.85972,,
+lm,pooling,feature_set,label,lm_test_ppl,test_acc,acc_ci95_lo,acc_ci95_hi,panel
+rnn,mean,rnn_mean,RNN mean,99.0056621457572,0.79968,0.7947989999999999,0.804921,lower
+rnn,last,rnn_last,RNN last,99.0056621457572,0.651,0.645038,0.656683,lower
+lstm,mean,lstm_mean,LSTM-A mean,75.55497164785729,0.84792,0.8434780000000001,0.8522810000000001,upper
+lstm,last,lstm_last,LSTM-A last,75.55497164785729,0.79416,0.7890389999999999,0.799122,lower
+transformer,mean,transformer_mean,Transformer mean,64.52249649605317,0.87908,0.874799,0.8830410000000001,upper
+transformer,last,transformer_last,Transformer last,64.52249649605317,0.8394,0.834679,0.843761,upper
+lstm_own,mean,lstm_own_mean,LSTM-B mean,76.89782337168428,0.88012,0.876119,0.884201,upper
+lstm_own,last,lstm_own_last,LSTM-B last,76.89782337168428,0.86688,0.8629180000000001,0.8710019999999999,upper
+lstm_glove,mean,lstm_glove_mean,LSTM-C mean,77.8637216302043,0.8724,0.8683989999999999,0.876441,upper
+lstm_glove,last,lstm_glove_last,LSTM-C last,77.8637216302043,0.86552,0.861678,0.8698,upper
+tfidf_uni_bi,baseline,tfidf_uni_bi,TF-IDF uni+bigram,,0.88084,,,upper
+w2v_mean,baseline,w2v_mean,word2vec mean,,0.85972,,,upper

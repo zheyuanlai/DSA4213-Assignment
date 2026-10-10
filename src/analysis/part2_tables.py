@@ -167,7 +167,7 @@ def fig_curves(stem_val: str, stem_train: str) -> list[str]:
         mv, _, _ = _band(ax, ep, val, setting, plots.LABELS[setting])
         rows_v.append(pd.DataFrame({"setting": setting, "epoch": ep, "val_ce_mean": mv, "val_ce_std": val.std(axis=0, ddof=1) if len(runs) > 1 else 0.0}))
     ax.set_xlabel("epoch"); ax.set_ylabel("LM-val cross-entropy (nats/token)")
-    ax.set_title(f"Part II: LM-val cross-entropy per epoch (mean ± std)"); ax.legend()
+    ax.legend()
     plots.dump(pd.concat(rows_v, ignore_index=True), "results/part2/val_curves.csv")
     figs += plots.save(fig, stem_val)
     fig, ax = plots.new_figure(height=2.5)
@@ -179,7 +179,7 @@ def fig_curves(stem_val: str, stem_train: str) -> list[str]:
         mt, _, _ = _band(ax, x_tr, tr, setting, plots.LABELS[setting], lw=0.8, marker=True)
         rows_t.append(pd.DataFrame({"setting": setting, "epoch": x_tr, "train_loss_mean": mt, "train_loss_std": tr.std(axis=0, ddof=1) if len(runs) > 1 else 0.0}))
     ax.set_xlabel("epoch"); ax.set_ylabel("train CE, 50-step mean (nats/token)"); ax.set_ylim(top=7.0)
-    ax.set_title(f"Part II: training loss, dropout active (mean ± std)"); ax.legend()
+    ax.legend()
     plots.dump(pd.concat(rows_t, ignore_index=True), "results/part2/train_curves.csv")
     figs += plots.save(fig, stem_train)
     return figs
@@ -194,13 +194,52 @@ def fig_freq(df: pd.DataFrame, stem: str, kind: str = "target") -> list[str]:
         ax.bar(np.arange(len(buckets)) + (k - 1) * w, d.ce_mean_over_seeds, w, yerr=d.ce_std_over_seeds, capsize=1.5,
                color=plots.COLORS[setting], hatch=plots.hatch(setting), edgecolor="white", linewidth=0.4, label=plots.LABELS[setting])
     ax.set_xticks(np.arange(len(buckets))); ax.set_xticklabels(buckets)
-    if kind == "target":
-        ax.set_xlabel("LM-train frequency rank of the target"); ax.set_title("Part II: LM-test CE by target frequency bucket (mean ± std)")
-    else:
-        ax.set_xlabel("LM-train frequency rank of the preceding input token"); ax.set_title("Part II: LM-test CE by preceding-token frequency bucket (mean ± std)")
+    ax.set_xlabel("LM-train frequency rank of the target" if kind == "target" else "LM-train frequency rank of the preceding input token")
     ax.set_ylabel("mean LM-test CE (nats/token)")
     ax.set_ylim(0, ax.get_ylim()[1] * 1.42)                      # headroom: legend sits above the bars
     ax.legend(fontsize=6, loc="upper left", ncol=1, handlelength=1.4)
+    return plots.save(fig, stem)
+
+
+BUCKET_ORDER = ["1-100", "101-1k", "1k-5k", "5k-25k", "<unk>"]
+
+
+def freq_diff_vs_A(df: pd.DataFrame) -> pd.DataFrame:
+    """Difference of the mean bucket CE to setting A, with a combined std sqrt(std_A^2 + std_X^2) (settings are
+    separate training runs, so their run-to-run spreads are combined as independent)."""
+    a = df[df.setting == "A-random"].set_index("bucket")
+    rows = []
+    for setting in [s for s in ("B-own", "C-glove", "C-scaled") if (df.setting == s).any()]:
+        x = df[df.setting == setting].set_index("bucket")
+        for b in BUCKET_ORDER:
+            rows.append({"setting": setting, "bucket": b, "diff_vs_A_mean": float(x.loc[b, "ce_mean_over_seeds"] - a.loc[b, "ce_mean_over_seeds"]),
+                         "diff_vs_A_std": float(np.hypot(x.loc[b, "ce_std_over_seeds"], a.loc[b, "ce_std_over_seeds"])),
+                         "mean_ce_setting": float(x.loc[b, "ce_mean_over_seeds"]), "mean_ce_A": float(a.loc[b, "ce_mean_over_seeds"]),
+                         "n_targets": int(x.loc[b, "n_targets"])})
+    return pd.DataFrame(rows)
+
+
+def fig_freq_diff(df: pd.DataFrame, stem: str, kind: str, out_csv: str) -> list[str]:
+    """Grouped bars of (setting − A) per bucket with ± combined-std error bars and a zero line; C-scaled lighter."""
+    d = freq_diff_vs_A(df)
+    plots.dump(d, out_csv)
+    settings = list(dict.fromkeys(d.setting))
+    legend = {"B-own": "B − A (own word2vec, frozen)", "C-glove": "C − A (GloVe, frozen)", "C-scaled": "C-scaled − A (extra control)"}
+    fig, ax = plots.new_figure(height=2.4)
+    w = 0.8 / len(settings)
+    for k, setting in enumerate(settings):
+        dd = d[d.setting == setting].set_index("bucket").reindex(BUCKET_ORDER)
+        extra = setting == "C-scaled"
+        ax.bar(np.arange(len(BUCKET_ORDER)) + (k - (len(settings) - 1) / 2) * w, dd.diff_vs_A_mean, w,
+               yerr=dd.diff_vs_A_std, capsize=1.5, error_kw={"elinewidth": 0.7},
+               color=plots.COLORS[setting], alpha=0.45 if extra else 1.0, hatch=plots.hatch(setting),
+               edgecolor="white", linewidth=0.4, label=legend[setting])
+    ax.axhline(0.0, color="black", lw=0.8)
+    ax.set_xticks(np.arange(len(BUCKET_ORDER))); ax.set_xticklabels(BUCKET_ORDER)
+    ax.set_xlabel("LM-train frequency rank of the target" if kind == "target" else "LM-train frequency rank of the preceding input token")
+    ax.set_ylabel("Δ mean LM-test CE vs A (nats/token)")
+    lo, hi = ax.get_ylim(); ax.set_ylim(lo, hi + 0.45 * (hi - lo))
+    ax.legend(fontsize=6, loc="upper left")
     return plots.save(fig, stem)
 
 
@@ -215,15 +254,18 @@ def main() -> None:
     fb = freq_buckets("target"); fb.to_csv(out / "freq_buckets.csv", index=False); print(fb.to_string(index=False))
     cb = freq_buckets("context"); cb.to_csv(out / "context_freq_buckets.csv", index=False); print(cb.to_string(index=False))
     (out / "nearest_neighbours.md").write_text(nearest_neighbours())
-    figs = fig_curves("part2_val_curves", "part2_train_curves") + fig_freq(fb, "part2_freq_buckets", "target") + fig_freq(cb, "part2_context_freq_buckets", "context")
+    figs = fig_curves("part2_val_curves", "part2_train_curves") + fig_freq(fb, "part2_freq_buckets_abs", "target") + fig_freq(cb, "part2_context_freq_buckets_abs", "context")
+    fbs, cbs = fb, cb
     # extra control C-scaled (D95): own files, never in the main table
     if runs_for("C-scaled"):
         ext = ["B-own", "C-glove", "C-scaled"]
         main_table(["A-random"] + ext).to_csv(out / "ablation_glove_scaled.csv", index=False)
         stability_table(["A-random"] + ext).to_csv(out / "stability_glove_scaled.csv", index=False)
-        freq_buckets("target", ["A-random"] + ext).to_csv(out / "freq_buckets_with_scaled.csv", index=False)
-        freq_buckets("context", ["A-random"] + ext).to_csv(out / "context_freq_buckets_with_scaled.csv", index=False)
+        fbs = freq_buckets("target", ["A-random"] + ext); fbs.to_csv(out / "freq_buckets_with_scaled.csv", index=False)
+        cbs = freq_buckets("context", ["A-random"] + ext); cbs.to_csv(out / "context_freq_buckets_with_scaled.csv", index=False)
         print("C-scaled extra tables written")
+    figs += fig_freq_diff(fbs, "part2_freq_buckets", "target", "results/part2/freq_buckets_diff_vs_A.csv")
+    figs += fig_freq_diff(cbs, "part2_context_freq_buckets", "context", "results/part2/context_freq_buckets_diff_vs_A.csv")
     print("figures:", *figs, sep="\n  ")
 
 

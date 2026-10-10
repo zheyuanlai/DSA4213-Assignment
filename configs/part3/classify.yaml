@@ -18,7 +18,7 @@ classifier:
   C_grid: [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]   # extended from 4 to 6 values (user D91); the 4-value results are kept as *_Cgrid4.*
   solver: lbfgs
   max_iter: 2000
-  tie_rule: smaller C           # if two C values tie on classifier-val accuracy (PENDING USER REVIEW, D80)
+  tie_rule: smaller C           # if two C values tie on classifier-val accuracy (approved, D80)
 tfidf:
   ngram_range: [1, 2]
   max_features: 100000

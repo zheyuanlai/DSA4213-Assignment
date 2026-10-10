@@ -2,7 +2,7 @@
 
 Paths are relative to the repository root. Per-run logs: `results/runs/<run>/log.jsonl` (records:
 config+env, every-50-step training stats, per-epoch LM-val, LM-test, summary) and `steps.npz`
-(per-step loss and pre-clip gradient norm).
+(per-step loss and pre-clip gradient norm). Working documents: `docs/TASK.md`, `docs/PLAN.md`, `docs/NOTES.md`.
 
 ## Environment and data
 - `results/env.json` — GPU, CPU, library versions and an nvidia-smi snapshot at timing time.
@@ -22,11 +22,13 @@ config+env, every-50-step training stats, per-epoch LM-val, LM-test, summary) an
 - `results/part1/generations.md` — per prompt, greedy output and two samples (seeds 0, 1) of all four models side by side.
 - `results/part1/generations_all.jsonl` — every generated sample (5 prompts × 20 seeds + greedy per model).
 - `results/part1/generation_metrics.csv` — distinct-1, distinct-2 and within-sample repeated-4-gram rate for samples and greedy outputs, per model.
-- `results/part1/loss_by_position.csv` — mean LM-test CE at block positions 1–256 per model (neural: mean over 3 seeds).
+- `results/part1/loss_by_position.csv` — mean LM-test CE at block positions 1–256 per model (neural: mean and std columns).
+- `results/part1/loss_by_position_binned.csv` — mean LM-test CE per log-spaced position bin (1, 2–3, …, 128–256) per model, with std for the neural models.
 - `results/figures/part1_curves_{rnn,lstm,transformer}.{pdf,png}` — training loss (50-step means, dropout active) and LM-val CE per epoch, mean ± std (values: `results/part1/curves_{model}.csv`).
 - `results/figures/part1_learning_curves.{pdf,png}` — 1×3 panels (RNN, LSTM, Transformer; shared y-axis): training loss and LM-val CE per epoch as the mean with a min–max band, plus the n-gram LM-val CE as a dashed reference (values: `results/part1/learning_curves.csv`).
 - `results/figures/part1_val_curves.{pdf,png}` — LM-val CE per epoch for the three neural models, mean ± std, with the n-gram's val CE as a reference line (values: `results/part1/val_curves.csv`).
-- `results/figures/part1_loss_by_position.{pdf,png}` — mean LM-test CE by block position for all four models (neural: mean ± std; values incl. std columns in `loss_by_position.csv`).
+- `results/figures/part1_loss_by_position.{pdf,png}` — mean LM-test CE per log-spaced position bin for all four models, neural models with ± std error bars (values: `loss_by_position_binned.csv`).
+- `results/figures/part1_loss_by_position_raw.{pdf,png}` — mean LM-test CE at every block position 1–256, log-scaled axis (values: `loss_by_position.csv`).
 - `results/figures/part1_ngram_order.{pdf,png}` — LM-val PPL vs n-gram order (1–5, modified KN) with memory (MB) on a secondary axis (values: `results/part1/ngram_order_figure.csv`).
 
 ## Part II — embedding variants on the LSTM
@@ -40,8 +42,9 @@ config+env, every-50-step training stats, per-epoch LM-val, LM-test, summary) an
 - `results/part2/nearest_neighbours.md` — 10 cosine nearest neighbours of good, bad, boring, actor, plot in the word2vec, GloVe and trained LSTM seed-0 embedding tables.
 - `results/part2/generations.md`, `generations_all.jsonl`, `generation_metrics.csv` — Section 4.5 generation protocol for A, B, C.
 - `results/figures/part2_val_curves.{pdf,png}`, `results/figures/part2_train_curves.{pdf,png}` — LM-val CE per epoch and training loss (dropout active) for settings A, B, C, mean ± std (values: `results/part2/val_curves.csv`, `train_curves.csv`).
-- `results/figures/part2_freq_buckets.{pdf,png}` — LM-test CE by target frequency bucket for A, B, C (mean ± std).
-- `results/part2/context_freq_buckets.csv`, `results/figures/part2_context_freq_buckets.{pdf,png}` — LM-test CE bucketed by the LM-train frequency rank of the immediately preceding input token (same buckets plus `<unk>`), A/B/C mean ± std over seeds.
+- `results/figures/part2_freq_buckets.{pdf,png}` — difference in LM-test CE to setting A (B − A, C − A, C-scaled − A) by target frequency bucket, ± combined std (values: `results/part2/freq_buckets_diff_vs_A.csv`); `part2_freq_buckets_abs` — absolute values for A, B, C (values: `freq_buckets.csv`).
+- `results/part2/context_freq_buckets.csv` — LM-test CE bucketed by the LM-train frequency rank of the immediately preceding input token (same buckets plus `<unk>`), A/B/C mean ± std; `context_freq_buckets_diff_vs_A.csv` — differences to A with combined std.
+- `results/figures/part2_context_freq_buckets.{pdf,png}` — difference in LM-test CE to setting A by preceding-token frequency bucket, ± combined std; `part2_context_freq_buckets_abs` — absolute values for A, B, C.
 - `results/part2/glove_scaled.json` — the scalar applied to the GloVe table for the C-scaled control (target per-dimension std = word2vec table's).
 - `results/part2/ablation_glove_scaled.csv`, `stability_glove_scaled.csv`, `freq_buckets_with_scaled.csv`, `context_freq_buckets_with_scaled.csv` — extra control C-scaled (rescaled frozen GloVe) reported next to A, B, C; outside the main Part II table.
 
@@ -65,7 +68,7 @@ config+env, every-50-step training stats, per-epoch LM-val, LM-test, summary) an
 - `results/part1/generation_brackets.csv` — per model (Part I and Part II): "(" opened within the first 40 generated tokens, fraction closed by a matching ")" in the same sample, fraction of samples with an even number of `"` tokens.
 
 ## Part III figure and figure index
-- `results/figures/part3_ppl_vs_accuracy.{pdf,png}` — seed-0 LM-test perplexity vs IMDb-test accuracy per LM and pooling (two marker shapes), 95 % CI error bars, dashed TF-IDF and word2vec-mean baseline lines (values: `results/part3/ppl_vs_accuracy.csv`).
+- `results/figures/part3_ppl_vs_accuracy.{pdf,png}` — LM-test perplexity of the checkpoint the features come from vs IMDb-test accuracy per LM and pooling (two marker shapes), 95 % CI error bars, broken y-axis, dashed TF-IDF uni+bigram and word2vec-mean baseline lines (values: `results/part3/ppl_vs_accuracy.csv`).
 - `results/figures/CAPTIONS.md` — one factual caption per figure with the CSV holding its plotted values; all figures use one fixed colour-blind-safe colour, line style, marker and hatch per model.
 
 ## Smoke and reproduction

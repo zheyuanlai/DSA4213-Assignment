@@ -4,9 +4,11 @@ Word-level language models trained from scratch on IMDb reviews (Kneser–Ney n-
 Transformer), an input-embedding ablation on the LSTM (random-trainable vs own word2vec vs GloVe,
 both frozen), and downstream sentiment classification with frozen LM representations.
 
-Index of every table and figure: [results/SUMMARY.md](results/SUMMARY.md). Figure captions:
-[results/figures/CAPTIONS.md](results/figures/CAPTIONS.md). Every number in `results/` is produced by
-the code in `src/` from the configs in `configs/`; nothing is entered by hand.
+Index of every table and figure: [results/SUMMARY.md](results/SUMMARY.md); figure captions:
+[results/figures/CAPTIONS.md](results/figures/CAPTIONS.md). Working documents: the specification
+[docs/TASK.md](docs/TASK.md), the plan [docs/PLAN.md](docs/PLAN.md) and the decision log
+[docs/NOTES.md](docs/NOTES.md). Every number in `results/` is produced by the code in `src/` from the
+configs in `configs/`; nothing is entered by hand.
 
 ## 1. Data access
 
@@ -79,9 +81,9 @@ in the four shell scripts, which can also be run in smoke mode (`--limit N` / `s
 ```bash
 bash scripts/prepare_data.sh                 # Stage 1: download, clean, tokenise, de-dup, split, vocab, streams (~1 min)
 python -m pytest tests/ -q                   # 41 tests: tokeniser, causality (a), KN normalisation (b), padding (c), overfit (d), uniform check
-bash scripts/run_part1.sh                    # Stage 2-4: KN n-gram, parameter table, smoke runs, LR probes, 9 full runs, timing, generation, tables
-bash scripts/run_part2.sh                    # Stage 5: word2vec, GloVe, 2 smoke + 6 frozen-embedding runs, generation, analyses
-bash scripts/run_part3.sh                    # Stage 6: features, classifiers, baselines, error exports, ablation
+bash scripts/run_part1.sh                    # Stage 2-4: KN n-gram, parameter table, smoke runs, LR probes, 9 full runs, timing, generation, tables, figures
+bash scripts/run_part2.sh                    # Stage 5: word2vec, GloVe, 2 smoke + 6 frozen-embedding runs, C-scaled control (smoke + 3 runs), generation, tables, figures
+bash scripts/run_part3.sh                    # Stage 6: features, classifiers (6-value C grid), 4 baselines, paired bootstrap, error exports, ablation, follow-up checks, figure, captions
 ```
 
 Smoke mode (minutes, CPU or GPU): `bash scripts/prepare_data.sh --limit 500`,
@@ -123,9 +125,13 @@ recorded in its log (`results/runs/<run>/log.jsonl`, record 0, `env`).
 - Part III (`configs/part3/classify.yaml`): IMDb train split 22,500/2,500 stratified (seed 0);
   input `<eos>` + first 255 tokens; features = 300-d pre-head vector of the seed-0 checkpoints,
   `last` or masked `mean`; `StandardScaler` + `LogisticRegression(lbfgs, max_iter 2000)`, C from
-  {0.01, 0.1, 1, 10} by classifier-val accuracy (ties → smaller C); IMDb test used once. Baselines:
-  TF-IDF uni+bigrams (top 100k, no scaler — rows are already L2-normalised) and the masked mean of
-  the frozen GloVe table. 95 % bootstrap CIs with 1,000 resamples (seed 0).
+  {0.01, 0.1, 1, 10, 100, 1000} by classifier-val accuracy (ties → smaller C); IMDb test used once.
+  The results of an earlier 4-value grid {0.01, 0.1, 1, 10} are kept only as `results/part3/*_Cgrid4.*`.
+  Baselines with the same procedure: TF-IDF uni+bigrams (top 100k, no scaler — rows are already
+  L2-normalised) and the masked means over the same inputs of three embedding tables: frozen GloVe
+  (`glove_mean`), own word2vec (`w2v_mean`) and the trained input embedding of the Part I LSTM, seed 0
+  (`lstmA_emb_mean`). 95 % bootstrap CIs with 1,000 resamples (seed 0); paired bootstrap of accuracy
+  differences with 10,000 resamples (seed 0).
 - Generation (`src/generate.py`): prompts prefixed with `<eos>`; greedy and sampling (T 0.8,
   top-k 50); exactly 60 new tokens; **`<pad>` and `<unk>` are suppressed for every model**; the
   Transformer recomputes the full prefix at every step (no KV cache).
@@ -140,7 +146,7 @@ Shared node with 4 × NVIDIA H200 NVL (one used), 2 × AMD EPYC 9554 (256 thread
 Ubuntu 24.04, CUDA 12.6 runtime / cuDNN 9.10 (`results/env.json`). Approximate wall-clock times
 (see the logs for exact values): data pipeline 1 min; KN tables 6 s (CPU); each neural run
 4–4.5 min for 12 epochs (≈ 20 s/epoch); 9 LR probes 5 min; word2vec 1.8 min (16 CPU workers);
-Part II frozen runs 6 × 4.3 min; Part III feature extraction < 1 min, classifiers minutes
+Part II frozen runs 6 + 3 (C-scaled) × ≈ 4.2 min; Part III feature extraction < 1 min, classifiers minutes
 (TF-IDF is the slowest). Timing procedure for inference: `src/timing.py` (2 warm-ups, 5 timed
 repeats, `torch.cuda.synchronize()`, median; nvidia-smi snapshot before each run).
 
@@ -149,16 +155,18 @@ repeats, `torch.cuda.synchronize()`, median; nvidia-smi snapshot before each run
 ```
 configs/   one YAML per run (data, model, optimiser, seed); probes/, smoke/, part1/, part2/, part3/
 src/       data.py tokenize.py vocab.py ngram.py models.py train_lm.py evaluate.py generate.py
-           timing.py word2vec.py glove.py features.py classify.py common.py analysis/{plots,part1_tables,part2_tables}.py
+           timing.py word2vec.py glove.py features.py classify.py common.py
+           analysis/{plots,part1_tables,part2_tables,part3_tables,followup_checks,captions}.py
 scripts/   prepare_data.sh run_part1.sh run_part2.sh run_part2_scaled.sh run_part3.sh make_configs.py wait_gpu.py clean_clone_smoke.sh
 tests/     test_tokenize.py test_causality.py test_ngram_normalisation.py test_padding.py test_overfit.py test_evaluate_uniform.py
 results/   env.json SUMMARY.md part1/ part2/ part3/ figures/ runs/<run>/{log.jsonl,steps.npz}
+docs/      TASK.md (specification) PLAN.md (stage-0 plan) NOTES.md (decision log D1–D120)
 data/ checkpoints/   git-ignored (raw data, streams, embeddings, derived arrays, checkpoints)
 ```
 
-Comments in the source code cite sections of the original task specification ("TASK §…") and
-numbered design decisions ("D…") from the author's working notes; those documents are not part of
-this repository. The decisions that affect results are described in §5, §8 and §9.
+Comments in the source code cite sections of the specification ("TASK §…", `docs/TASK.md`) and
+numbered design decisions ("D…", `docs/NOTES.md`). The decision log is chronological and also mentions
+working files (progress log, stop-point reports) that are not part of the published repository.
 
 ## 8. Follow-up analyses (after the main experiments)
 
@@ -170,7 +178,8 @@ this repository. The decisions that affect results are described in §5, §8 and
   baselines (masked mean of the word2vec table, `w2v_mean`, and of the trained Part I LSTM seed-0
   input-embedding table, `lstmA_emb_mean`) in `results/part3/results_table.csv`.
 - Part II CE bucketed by the frequency of the *preceding* input token
-  (`results/part2/context_freq_buckets.csv`, `results/figures/part2_context_freq_buckets`).
+  (`results/part2/context_freq_buckets.csv`; figure `results/figures/part2_context_freq_buckets` shows
+  the difference to setting A, `part2_context_freq_buckets_abs` the absolute values).
 - C-scaled control (GloVe table × one scalar so its per-dimension std equals the word2vec table's;
   frozen, 3 seeds; `configs/part2/lstm_glovescaled_seed*.yaml`), reported outside the main Part II
   table in `results/part2/ablation_glove_scaled.csv`, `stability_glove_scaled.csv` and the
@@ -181,11 +190,13 @@ this repository. The decisions that affect results are described in §5, §8 and
 - Nearest neighbours (`results/part2/nearest_neighbours.md`) compare the word2vec, GloVe and trained
   LSTM seed-0 embedding tables.
 
-**Figures.** All figures (`results/figures/`, PDF + PNG, half-page width) use one fixed colour-blind-safe
-colour, line style, marker and bar hatch per model (`src/analysis/plots.py`); curves over several runs are
-drawn as the mean with a ± std band (the three-panel `part1_learning_curves` uses a min–max band); the
-plotted values of every figure are dumped to CSV and each figure has a one-line caption in
-`results/figures/CAPTIONS.md`.
+**Figures.** All figures (`results/figures/`, PDF + PNG, half-page width, no in-figure titles) use one
+fixed colour-blind-safe colour, line style, marker and bar hatch per model (`src/analysis/plots.py`).
+Curves over several runs show the mean with a ± std band (the three-panel `part1_learning_curves` uses a
+min–max band); `part1_loss_by_position` bins positions logarithmically (per-position version:
+`part1_loss_by_position_raw`); the Part II bucket figures show the difference to setting A (absolute
+versions: `*_abs`); `part3_ppl_vs_accuracy` uses a broken y-axis. The plotted values of every figure are
+dumped to CSV, and each figure has a one-line caption in `results/figures/CAPTIONS.md`.
 
 ## 9. Known limitations
 
@@ -193,8 +204,8 @@ plotted values of every figure are dumped to CSV and each figure has a one-line 
   epoch (12); the cosine schedule decays until the final epoch and the final-epoch gains (≤ 0.015 nats)
   are an order of magnitude smaller than the gaps between models, but the models were still improving.
 - **Learning-rate grid**: the LSTM and Transformer optima lie at the upper edge of the pre-specified
-  grid {3e-4, 1e-3, 2e-3}; larger rates were not explored. (In Part III, `transformer_mean` also chose
-  the upper edge of the extended C grid.)
+  grid {3e-4, 1e-3, 2e-3}; larger rates were not explored. (In Part III, `transformer_mean` and the
+  `lstmA_emb_mean` baseline also chose the upper edge C = 1000 of the extended C grid.)
 - **Seed-0 checkpoints**: Part III features, all generations and the inference timings use the seed-0
   checkpoint of each model; only test CE/PPL and the curve/bucket figures use all three seeds.
 - **Truncation**: Part III inputs are `<eos>` + the first 255 review tokens (34.7 % of IMDb-test and
@@ -205,12 +216,17 @@ plotted values of every figure are dumped to CSV and each figure has a one-line 
 - **Single dataset**: all language models, embeddings and classifiers use IMDb only (unsupervised
   split for the LMs, labelled splits for Part III); GloVe is the only external data.
 - **Setting A reuse**: in the Part II generation and bracket/quote tables, A is the very same checkpoint
-  as the Part I LSTM seed 0 (the assignment reuses it as setting A), so those rows duplicate the Part I
-  LSTM rows.
+  as the Part I LSTM seed 0 (as the specification prescribes, `docs/TASK.md` §5), so those rows
+  duplicate the Part I LSTM rows.
 
 ## 10. Use of AI tools
 
-_Placeholder — to be filled in by the author._
+**Declaration of AI use.** All code was written and all experiments were run by an AI coding agent
+(Claude Code by Anthropic, running the Claude Fable 5.1 and Claude Opus 5.5 models) under my direction,
+following a specification I developed with Claude (Anthropic). I also used Claude to understand the
+requirements, discuss the experimental design and review intermediate results; several design choices
+originated from these discussions. I reviewed every stage, made the final decisions (logged in
+`docs/NOTES.md`), checked all outputs used here, and wrote the analysis and interpretation myself.
 
 ## 11. Attribution
 
